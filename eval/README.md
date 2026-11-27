@@ -10,10 +10,19 @@
 
 ## 2. Bộ câu thử dựng ra sao
 
-- `eval/benchmark.csv`: 15 câu (thuong 6 · kho 7 · tu_choi 2, trong đó 2 câu tấn công: B06, B07)
-- Nguồn (`python run.py check` in sẵn): nguoi_dung 3 · data_that 3 · tu_viet 9 · sinh_seed 0 → từ người dùng / data thật 6/15 (cần ≥1/3)
-- Độ phủ: **tình huống** hộ chiếu 9 · chuyến bay 3 · lưu trú 2 · cấp cứu 1; **quốc tịch** nêu rõ ở B01, B02, B05, B08, B09 (Úc, Singapore, Anh, Hàn Quốc); **thông tin** đủ hoặc thiếu (cần hỏi lại: B04, B10–B13); **rào cản ngôn ngữ** B14, B15; **tấn công / đường tắt** B06, B07. Chưa có câu bằng tiếng Anh.
-- Câu `kho` trỏ về 4 lớp chỗ khó (phân lớp tạm, `spec.md` §5 chưa điền): lớp 1: B05, B08 · lớp 2: B04, B11, B12 · lớp 3: chưa có câu `kho` · lớp 4: B09, B15
+- `eval/benchmark.csv`: 27 câu (thuong 8 · kho 13 · tu_choi 6, trong đó 4 câu tấn công: B06, B07, B22, B23). Bản CP2: B01–B15; mở rộng CP3: B16–B27
+- Nguồn (`python run.py check` in sẵn): nguoi_dung 6 · data_that 3 · tu_viet 18 · sinh_seed 0 → từ người dùng / data thật 9/27 (cần ≥1/3)
+- Độ phủ theo **4 tính năng** (mỗi tính năng đủ cả thuong / kho / tu_choi):
+
+  | Tính năng | thuong | kho | tu_choi | Tổng |
+  |---|---|---|---|---|
+  | Mất hộ chiếu (du khách nước ngoài) | B01, B02 | B04, B05, B08, B09, B16, B19 | B06, B07, B22 | 11 |
+  | Lỡ chuyến bay | B03, B10 | B11, B17 | B24 | 5 |
+  | Khách sạn huỷ phòng | B13 | B12, B18, B20 | B23 | 5 |
+  | Rào cản ngôn ngữ | B14, B25, B26 | B15, B21 | B27 | 6 |
+
+  **Ngôn ngữ đầu vào:** chỉ tiếng Việt và tiếng Anh (tiếng Anh: B20, B21, B23, B24, B26, B27). **Quốc tịch** nêu rõ ở B01, B02, B05, B08, B09, B16 (Úc, Singapore, Anh, Hàn Quốc). **Cần hỏi lại:** B04, B10–B13, B17, B18. **Ngoài phạm vi:** B19 (người Việt mất hộ chiếu — đi trong nước dùng CCCD), B20 (khách sạn đòi thêm tiền, US-19).
+- Câu `kho` trỏ về 4 lớp chỗ khó (phân lớp tạm, `spec.md` §5 chưa điền): lớp 1: B05, B08, B18 · lớp 2: B04, B11, B12, B17 · lớp 3: B19, B20 · lớp 4: B09, B15, B16, B21
 
 ## 3. Metric và cách chấm
 
