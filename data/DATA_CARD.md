@@ -26,4 +26,4 @@
 | Số dòng / số đoạn | chưa biên soạn (dự kiến 20–40, *tự ước tính*) |
 | Phiên bản / ngày lấy | chưa có |
 | Nhãn | chưa có dữ liệu |
-| Giới hạn | chỉ 4 nhánh (`ho_chieu`, `chuyen_bay`, `luu_tru`, `ngon_ngu`); nguồn cho lỡ chuyến / huỷ phòng chưa chốt; địa chỉ, giờ mở cửa có thể thay đổi |
+| Giới hạn | chỉ 4 nhánh (`ho_chieu`, `chuyen_bay`, `luu_tru`, `ngon_ngu`) và một đoạn cấp cứu `khan_cap`; nguồn cho lỡ chuyến / huỷ phòng chưa chốt; địa chỉ, giờ mở cửa có thể thay đổi |

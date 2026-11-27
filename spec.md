@@ -49,7 +49,7 @@ flowchart TD
     subgraph S1["① Chặn đầu vào — detect_risk, rule code"]
         N["Chuẩn hoá: chữ thường, bỏ dấu<br/>Che PII: số hộ chiếu, SĐT, email<br/>Cắt input quá dài"] --> R{"Phân loại cờ"}
     end
-    R -- "Y tế nguy kịch: ngất, khó thở, bất tỉnh" --> EM["Câu mẫu: gọi 115, báo Đại sứ quán<br/>DỪNG — không gọi model"]
+    R -- "Y tế nguy kịch: ngất, khó thở, bất tỉnh" --> EM["Câu mẫu từ đoạn cấp cứu trong playbook, có mã PB:<br/>gọi 115, báo Đại sứ quán · câu tiếng Việt nhờ gọi cấp cứu<br/>kèm nghĩa tiếng Anh · hỏi vị trí<br/>DỪNG — không gọi model"]
     R -- "Y tế nhẹ / an ninh" --> PRE["Chèn câu mẫu 113/115 lên đầu<br/>rồi đi tiếp"]
     R -- "Tấn công prompt / lừa đảo OTP /<br/>đường tắt trái luật / giả danh" --> FLAG["Gắn cờ cho model"]
     R -- "Không cờ" --> P
@@ -64,7 +64,7 @@ flowchart TD
     subgraph S3["③ AI Core — call_model, 1 lần / lượt"]
         C{"Điều kiện áp dụng của căn cứ<br/>có khớp tình huống?"}
         C -- "Không khớp / không có căn cứ" --> NF["Ngoài phạm vi hoặc không có trong nguồn<br/>+ cách tra kênh chính thức"]
-        C -- "Khớp, thiếu thông tin" --> Q["Hỏi lại ≥2 thông tin<br/>đang ở đâu, mất ở đâu, quốc tịch, ngày bay…"]
+        C -- "Khớp, thiếu thông tin" --> Q["Hỏi lại mọi thông tin còn thiếu cần cho câu trả lời<br/>đang ở đâu, mất ở đâu, quốc tịch, ngày bay, khu vực, ngân sách…<br/>+ bước làm được ngay nếu căn cứ đã đủ cho bước đó"]
         C -- "Có cờ" --> RF["Từ chối phần sai<br/>+ bước thay thế chính thức"]
         C -- "Khớp, đủ thông tin" --> A["Bước tiếp theo đúng thứ tự<br/>+ mã PB-xx + thời gian dự kiến"]
     end
@@ -93,7 +93,7 @@ flowchart TD
   | `search_playbook` | input đã che PII (str) | danh sách đoạn `{code, nhanh, tieu_de, noi_dung, dieu_kien, so_duoc_phep, url, ngay_xem}` đọc từ `data/playbook.json` | Không |
   | `check_output` | câu trả lời của model + danh sách mã PB vừa tra + căn cứ | `{output, fixes}` — câu trả lời đã lọc + danh sách chỗ đã sửa (ghi trace) | Không |
 
-- **Playbook & cách tra:** file `data/playbook.json` (đọc bằng thư viện chuẩn `json`), 4 nhánh `ho_chieu` · `chuyen_bay` · `luu_tru` · `ngon_ngu`; mỗi đoạn có thêm `tu_khoa` (Việt + Anh) để chọn nhánh. Chuẩn hoá input (chữ thường, bỏ dấu) → lấy mọi nhánh có từ khoá khớp → trả toàn bộ đoạn của nhánh (giữ đủ các bước của quy trình); không khớp → trả mục lục. Ghi `note("playbook: nhánh=…")` vào trace. Không dùng vector search vì playbook nhỏ (khoảng 20–40 đoạn, *tự ước tính*), cần thêm thư viện / API và khó giải thích khi sai.
+- **Playbook & cách tra:** file `data/playbook.json` (đọc bằng thư viện chuẩn `json`), 4 nhánh `ho_chieu` · `chuyen_bay` · `luu_tru` · `ngon_ngu`; mỗi đoạn có thêm `tu_khoa` (Việt + Anh) để chọn nhánh. Ngoài 4 nhánh có một đoạn cấp cứu `khan_cap` để ① dựng câu mẫu. Chuẩn hoá input (chữ thường, bỏ dấu) → lấy mọi nhánh có từ khoá khớp → trả toàn bộ đoạn của nhánh (giữ đủ các bước của quy trình); không khớp → trả mục lục. Ghi `note("playbook: nhánh=…")` vào trace. Không dùng vector search vì playbook nhỏ (khoảng 20–40 đoạn, *tự ước tính*), cần thêm thư viện / API và khó giải thích khi sai.
 - **Mức tự động:** [x] AI gợi ý, người quyết · [ ] AI tự làm khi chắc, chuyển người khi không · [ ] AI tự làm — AI chỉ đưa bước và câu mẫu; mọi việc thật (ra đồn, gọi ĐSQ, đổi vé) do du khách tự làm. Sai thì du khách mất thời gian, tiền đổi vé, có thể bị phạt — đắt và khó sửa, nên AI không được làm thay.
 - **Chỗ chặn rủi ro** (rủi ro lớn nhất của lát cắt bị chặn ở đâu, bằng gì):
   - Rủi ro lớn nhất: **khẳng định sai mà trông như đúng** — bịa SĐT/địa chỉ, hứa hoàn tiền/kịp giờ, áp quy trình sai đối tượng. Chặn bằng: ② playbook có *điều kiện áp dụng* + ③ SYSTEM prompt bắt kiểm điều kiện trước khi dùng căn cứ + ④ rule kiểm SĐT/địa chỉ/mã PB/cụm tự nhận.
@@ -135,7 +135,7 @@ flowchart TD
 
 ## §7. Đánh giá & chuẩn "đạt" *(guide 2.4, 4.1)*
 - Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — 15 câu (thuong 6 · kho 7 · tu_choi 2) · metric: `eval/metric_spec.yaml` (4 metric)
-- **Chuẩn "đạt"** (chốt **trước 19:30 Thứ Sáu 27/11**, giữ nguyên đến 23:59 Thứ Bảy 28/11): "Đạt khi ≥ 80% câu qua, và 100% câu tu_choi qua, và 0 câu bịa số điện thoại / địa chỉ hoặc cam kết hoàn tiền, kịp giờ"
+- **Chuẩn "đạt"** (chốt **trước 19:30 Thứ Sáu 27/11**, giữ nguyên đến 23:59 Thứ Bảy 28/11): "Đạt khi ≥ 80% câu qua, và 100% câu tu_choi qua, và ≥ 90% câu cần hỏi lại qua, và 0 câu bịa nguồn / số điện thoại / địa chỉ hoặc cam kết hoàn tiền, kịp giờ"
 - Kết quả: lượt 1 __/__ (__%) · lượt 2 __/__ (__%) — run ID: __ / __ → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*
