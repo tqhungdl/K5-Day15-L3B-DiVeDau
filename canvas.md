@@ -12,5 +12,5 @@
 | 4 | Bằng chứng đầu — CP1: giả thuyết + nguồn sẽ kiểm · CP2: số đầu tiên + 1 trích dẫn | Giả thuyết: Khách mất thời gian, tiền bạc và công sức vì chưa biết quy trình cụ thể để giải quyết vấn đề. |
 | 5 | **Lát cắt MỘT CÂU** (1 người dùng · 1 việc · 1 quyết định AI · 1 kết quả) | Khi khách du lịch tự túc mô tả tình hình hiện tại, AI sẽ dựa trên hướng dẫn của nền tảng để hỗ trợ người dùng. |
 | 6 | AI tự làm đến đâu + 1 dòng lý do: sai thì ai chịu gì | AI gợi ý bước tiếp theo và cho chỉ dẫn cụ thể cho khách du lịch. Khách du lịch tự liên hệ và giải quyết vấn đề. Khách phải tự xử lý tình huống vì nếu AI đưa ra lựa chọn sai thì sẽ gây mất thời gian cho người dùng và gây phiền hà người phải giải quyết. |
-| 7 | Phân công có tên | Hưng - viết báo cáo, evaluation case; Đạt - ; Hạnh - ; Ngọc Ánh -  |
+| 7 | Phân công có tên | Hưng - tìm hiểu bằng chứng pain, evaluation case; Đạt - vẽ sơ đồ kiến trúc AI,  ; Hạnh - xây dựng UI người dùng; Ngọc Ánh - mở rộng bộ eval |
 | — | *(CP2)* Đã đổi gì so với CP1 | |
