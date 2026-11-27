@@ -20,10 +20,10 @@
 
 | | |
 |---|---|
-| Dùng để làm gì | nguồn cho công cụ `search_playbook` |
-| Từ đâu | dự kiến: trích / viết lại từ nguồn chính thức, mỗi đoạn ghi URL và ngày xem |
-| Xử lý những bước gì | dự kiến: chia đoạn, gắn mã `PB-xx`, nhánh, từ khoá, điều kiện áp dụng |
-| Số dòng / số đoạn | chưa biên soạn (dự kiến 20–40, *tự ước tính*) |
-| Phiên bản / ngày lấy | chưa có |
-| Nhãn | chưa có dữ liệu |
-| Giới hạn | chỉ 4 nhánh (`ho_chieu`, `chuyen_bay`, `luu_tru`, `ngon_ngu`) và một đoạn cấp cứu `khan_cap`; nguồn cho lỡ chuyến / huỷ phòng chưa chốt; địa chỉ, giờ mở cửa có thể thay đổi |
+| Dùng để làm gì | nguồn sự thật cho công cụ `search_playbook` — agent chỉ khẳng định nội dung có trong đây, gắn mã `PB-xx` |
+| Từ đâu | nhóm biên soạn lại từ nguồn công khai (Nghị định 144/2021/NĐ-CP, Cổng Cục QLXNC, trang chính thức các đại sứ quán); URL + ngày xem nhóm bổ sung trước CP3 |
+| Xử lý những bước gì | chia đoạn, gắn mã `PB-xx`, từ khoá, điều kiện áp dụng; mọi con số ghi "dự kiến" |
+| Số dòng / số đoạn | 8 mục (PB-01…PB-08) · 4 chủ đề |
+| Phiên bản / ngày lấy | bản 1 — repo này |
+| Nhãn | `synthetic` (nhóm tự viết lại từ nguồn công khai) |
+| Giới hạn | nguồn cho lỡ chuyến / huỷ phòng chưa chốt → trả lời chung kèm hướng dẫn hỏi hãng/nền tảng (PRD §9); địa chỉ, giờ mở cửa có thể thay đổi |
