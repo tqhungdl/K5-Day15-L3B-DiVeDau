@@ -1,0 +1,388 @@
+/* Travel SOS — phong cách natural: ấm, tròn, như nhắn tin với người tư vấn */
+:root {
+  --bg: #faf6f0;
+  --card: #ffffff;
+  --ink: #3b352e;
+  --muted: #8a8075;
+  --accent: #0e7c6b;
+  --accent-soft: #e3f2ee;
+  --bubble-agent: #ffffff;
+  --bubble-user: #0e7c6b;
+  --danger: #c0392b;
+  --danger-soft: #fdecea;
+  --warn-soft: #fdf6e3;
+  --radius: 18px;
+  font-size: 18px; /* chữ to hơn để đọc dễ trên điện thoại */
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: var(--bg) url("bg.svg") center / cover no-repeat fixed;
+  color: var(--ink);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden { display: none !important; }
+.screen { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+/* ---- Màn chào ---- */
+#welcome { align-items: center; justify-content: center; }
+.welcome-card {
+  background: var(--card);
+  border-radius: 24px;
+  padding: 40px 32px;
+  max-width: 420px;
+  width: calc(100% - 32px);
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(59, 53, 46, .08);
+}
+.logo { font-size: 1.5rem; font-weight: 700; margin-bottom: 14px; }
+.welcome-line { margin: 0 0 18px; }
+.welcome-ask { font-weight: 600; margin: 0 0 14px; }
+.lang-buttons { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 18px; }
+.lang-buttons button {
+  border: 1.5px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform .08s ease, background .12s ease;
+}
+.lang-buttons button:hover { background: var(--accent); color: #fff; }
+.lang-buttons button:active { transform: scale(.97); }
+.welcome-note { color: var(--muted); font-size: .85rem; margin: 0; }
+
+/* ---- Topbar ---- */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, .88);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid #eee4d8;
+}
+.topbar-title {
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #0e7c6b;
+}
+
+/* cụm điều khiển bên phải: toggle + ngôn ngữ cạnh nhau */
+.topbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---- Toggle Chat / Voice ---- */
+.mode-toggle {
+  display: flex;
+  border: 1.5px solid #d8cfc2;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--bg);
+}
+.mode-toggle button {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: .85rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease;
+}
+.mode-toggle button.active {
+  background: var(--accent);
+  color: #fff;
+}
+#lang-select {
+  border: 1px solid #d8cfc2;
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: var(--bg);
+  font: inherit;
+  color: var(--ink);
+}
+
+/* ---- Danh mục câu hỏi thường gặp (tab) ---- */
+.tabs {
+  display: flex; gap: 8px;
+  padding: 10px 16px;
+  overflow-x: auto;
+  background: rgba(255, 255, 255, .72);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid #eee4d8;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button {
+  border: 1.5px solid #d8cfc2;
+  background: rgba(255, 255, 255, .92);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: .95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color .12s ease, background .12s ease;
+}
+.tabs button:hover { border-color: var(--accent); color: var(--accent); }
+.tabs button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ---- Khung "sổ tay" nền trắng mờ chứa hội thoại ---- */
+.notebook {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  /* canh lề trái, chừa bên phải cho nhân vật */
+  width: min(860px, calc(100% - 480px));
+  margin: 12px 0 16px 16px;
+  background: rgba(255, 255, 255, .8);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, .65);
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(59, 53, 46, .16);
+  overflow: hidden;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+}
+
+.bubble {
+  max-width: 86%;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-shadow: 0 2px 8px rgba(59, 53, 46, .06);
+}
+.agent-bubble { align-self: flex-start; background: var(--bubble-agent); border-bottom-left-radius: 6px; }
+.user-bubble { align-self: flex-end; background: var(--bubble-user); color: #fff; border-bottom-right-radius: 6px; }
+
+/* Thẻ cảnh báo / nói thật */
+.warn-block {
+  background: var(--warn-soft);
+  border-left: 3px solid #d9a441;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 10px;
+  font-size: .92rem;
+}
+
+/* Tag nguồn PB-xx */
+.pb-chip {
+  display: inline-block;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: none;
+  border-radius: 999px;
+  padding: 2px 10px;
+  margin: 2px 4px 0 0;
+  font-size: .78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pb-chip:hover { text-decoration: underline; }
+
+/* Thẻ khẩn cấp — nổi trên cùng (wireframe 3.6) */
+.emergency-card {
+  align-self: stretch;
+  background: var(--danger-soft);
+  border: 1.5px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-top: 4px;
+}
+.emergency-card .em-title { font-weight: 800; color: var(--danger); margin-bottom: 10px; }
+.emergency-card .em-buttons { display: flex; gap: 10px; margin-bottom: 10px; }
+.emergency-card .em-buttons a {
+  flex: 1;
+  text-align: center;
+  background: var(--danger);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 10px 0;
+}
+.emergency-card .em-note { font-size: .9rem; }
+
+/* Trạng thái đang soạn */
+.typing { align-self: flex-start; color: var(--muted); font-size: .9rem; padding: 4px 6px; }
+
+/* ---- Gợi ý nhanh ---- */
+.quick-chips {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  padding: 8px 16px;
+  margin: 0;
+}
+.quick-chips button {
+  border: 1px solid #d8cfc2;
+  background: rgba(255, 255, 255, .92);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-size: .95rem;
+  cursor: pointer;
+}
+.quick-chips button:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---- Ô nhập ---- */
+.composer {
+  display: flex; gap: 10px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: transparent;
+  border-top: 1px solid #eee4d8;
+  margin: 0;
+}
+#input {
+  flex: 1;
+  border: 1.5px solid #d8cfc2;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font: inherit;
+  background: var(--bg);
+  color: var(--ink);
+}
+#input:focus { outline: none; border-color: var(--accent); }
+#send {
+  width: 46px; height: 46px;
+  border: none; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+#send:disabled { opacity: .5; cursor: default; }
+
+/* ---- Nút nói (voice input) ---- */
+#mic {
+  width: 46px; height: 46px;
+  border: none; border-radius: 50%;
+  background: var(--bg);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background .15s ease, box-shadow .15s ease;
+}
+#mic:hover { background: var(--accent-soft); }
+#mic.recording {
+  background: var(--danger-soft);
+  box-shadow: 0 0 0 4px rgba(192, 57, 43, .18);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+#mic.hidden { display: none; }
+#mic.off { opacity: .45; filter: grayscale(1); }
+
+#mic-off {
+  border: none;
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-radius: 999px;
+  padding: 0 16px;
+  height: 46px;
+  font: inherit;
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+#mic-off:hover { background: #f9d3cd; }
+#mic-off.hidden { display: none; }
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(192, 57, 43, .15); }
+  50% { box-shadow: 0 0 0 8px rgba(192, 57, 43, .28); }
+}
+.listening-hint {
+  font-size: .8rem;
+  color: var(--danger);
+  padding: 0 16px 6px;
+  max-width: 752px; width: 100%; margin: 0 auto;
+}
+.speaking-hint {
+  font-size: .8rem;
+  color: var(--accent);
+  padding: 0 16px 6px;
+  max-width: 752px; width: 100%; margin: 0 auto;
+  cursor: pointer;
+}
+
+/* ---- Nhân vật: ảnh cô gái áo dài + lớp phủ miệng ---- */
+.avatar {
+  position: fixed;
+  right: 14px;
+  bottom: 0;      /* hạ thấp ngang khung chat */
+  width: 440px;   /* 4 × 110px */
+  z-index: 6;
+  pointer-events: none;
+}
+.avatar-frame {
+  position: relative;
+  border-radius: 16px;
+}
+.avatar-frame img { width: 100%; display: block; }
+.avatar-frame img.cutout { filter: drop-shadow(0 10px 22px rgba(59, 53, 46, .32)); }
+.mouth-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+/* đang nói: hiện miệng mở nguyên bản của ảnh, người nhún nhẹ */
+.avatar.talking #mouth-idle { display: none; }
+.avatar.talking .avatar-frame { animation: bob .56s ease-in-out infinite; }
+/* nghỉ: phủ miệng nhắm đang cười */
+#mouth-idle { display: block; }
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@media (max-width: 900px) {
+  .avatar { width: 300px; bottom: 0; right: 8px; }
+  .notebook { width: calc(100% - 320px); }
+}
+@media (max-width: 640px) {
+  .avatar { width: 180px; bottom: 0; right: 6px; opacity: .96; }
+  .notebook { width: calc(100% - 200px); }
+}
+
+/* ---- Modal nguồn ---- */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(59, 53, 46, .45);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+}
+.modal {
+  background: var(--card);
+  border-radius: 20px;
+  max-width: 420px; width: 100%;
+  padding: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .2);
+}
+.modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.modal-head span { font-weight: 700; }
+.modal-head button { border: none; background: none; font-size: 1rem; cursor: pointer; color: var(--muted); }
+.modal-note { color: var(--muted); font-size: .92rem; margin: 0; line-height: 1.5; }
