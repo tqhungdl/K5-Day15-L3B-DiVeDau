@@ -1,7 +1,7 @@
 # Wireframe & UI Flow — Travel SOS
 
 > Phong cách **natural**: giao diện như một cuộc nhắn tin với người tư vấn thân thiện — bong bóng chat, câu chữ ấm và tự nhiên, không dashboard, không jargon. Mọi câu trả lời AI luôn đi kèm nguồn (`PB-xx`) và lời nói thật khi không chắc.
-> Khớp PRD §4 (12 bước) — mỗi màn hình bên dưới là một **trạng thái của cùng một màn hình chat**.
+> Khớp PRD §4 (11 bước) — mỗi màn hình bên dưới là một **trạng thái của cùng một màn hình chat**.
 
 ---
 
@@ -14,7 +14,7 @@
 | Nguồn luôn nhìn thấy | Mỗi bước có tag nhỏ `PB-01` — bấm là mở nguồn + ngày xem; không giấu ở chỗ khuất |
 | Dẫn dắt, không bỏ rơi | Sau mỗi câu trả lời có 1–2 nút gợi ý việc tiếp theo ("Đã có biên bản → bước tiếp?") |
 | An toàn nổi bật | Từ khoá nguy hiểm (máu, bị cướp, đau ngực…) → thẻ đỏ 115/113 nổi lên trước mọi thứ |
-| Người dùng chọn ngôn ngữ | Selector 🌐 góc trên phải, mặc định English (PRD bước 1) |
+| Trả lời theo ngôn ngữ của câu hỏi | AI trả lời bằng ngôn ngữ du khách đang dùng (spec §4); selector 🌐 chỉ đổi ngôn ngữ giao diện (microcopy) |
 
 ---
 
@@ -22,7 +22,7 @@
 
 ```mermaid
 flowchart TD
-    A[Mở app lần đầu] --> B[Màn chào + chọn ngôn ngữ]
+    A[Mở app lần đầu] --> B[Màn chào]
     B --> C[Màn chat chính]
     C -->|nhập tình huống| D{AI phân loại}
     D -->|thiếu thông tin| E[Trạng thái hỏi lại]
@@ -49,7 +49,9 @@ Một màn hình duy nhất, **không có điều hướng phức tạp** — m�
 
 ## 3. Wireframe các màn hình
 
-### 3.1. Màn chào + chọn ngôn ngữ (bước 1)
+### 3.1. Màn chào (bước 1)
+
+Lưu ý: câu trả lời của AI theo ngôn ngữ của câu hỏi du khách nhắn (spec §4); màn chào chỉ giới thiệu, không chọn ngôn ngữ trả lời.
 
 ```
 ┌─────────────────────────────────────┐
@@ -58,15 +60,9 @@ Một màn hình duy nhất, **không có điều hướng phức tạp** — m�
 │   Mình luôn ở đây khi chuyến đi     │
 │   không theo kế hoạch.              │
 │                                     │
-│   Trước tiên, bạn muốn mình         │
-│   trả lời bằng ngôn ngữ nào?        │
-│                                     │
-│   ┌───────────┐  ┌───────────┐      │
-│   │  English  │  │  Tiếng Việt │    │
-│   └───────────┘  └───────────┘      │
-│   ┌───────────┐                     │
-│   │ 한국어 · … │  (thêm sau)        │
-│   └───────────┘                     │
+│   Bạn đang gặp chuyện gì?           │
+│   Nhắn bằng tiếng Anh hoặc          │
+│   tiếng Việt đều được.              │
 │                                     │
 │   ⓘ Mình chỉ tư vấn các bước,       │
 │   mọi hành động bạn tự quyết.       │
@@ -225,6 +221,6 @@ Một màn hình duy nhất, **không có điều hướng phức tạp** — m�
 
 - **1 màn hình, nhiều trạng thái** — team chỉ cần dựng khung chat + 5 loại thẻ (bước, cảnh báo, khẩn cấp, từ chối, nguồn); agent quyết định thẻ nào hiện.
 - Thẻ khẩn cấp (3.6) **nổi trên mọi thứ** khi phát hiện từ khoá nguy hiểm — không chờ luồng hỏi lại.
-- Microcopy mặc định tiếng Anh; khi user đổi ngôn ngữ 🌐, cả câu chào + gợi ý nhanh đổi theo (PRD bước 1).
+- Microcopy mặc định tiếng Anh; khi user đổi ngôn ngữ 🌐, cả câu chào + gợi ý nhanh đổi theo. Câu trả lời của AI thì theo **ngôn ngữ của câu hỏi** (spec §4) — không phụ thuộc selector.
 - Nút gợi ý ("Đã có biên bản → bước tiếp?") chỉ là **văn bản điền sẵn vào ô nhập** — user vẫn phải bấm gửi; agent không tự làm gì.
 - Không hiện bất kỳ con số nào ngoài phần có tag `PB-xx` hoặc chữ *"dự kiến"*.

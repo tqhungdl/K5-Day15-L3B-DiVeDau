@@ -17,7 +17,7 @@ Du khách du lịch ở Việt Nam gặp sự cố hành trình và không biế
 Chat AI hướng dẫn du khách xử lý sự cố hành trình ở Việt Nam, từng bước, kèm nguồn.
 
 - AI hỏi lại thông tin thiếu (đang ở tỉnh nào, mất ở đâu, quốc tịch, ngày bay…) trước khi hướng dẫn, không tự đoán.
-- Người dùng **chọn ngôn ngữ trả lời trên giao diện** (mặc định tiếng Anh).
+- AI trả lời theo **ngôn ngữ của câu hỏi** của du khách (đồng bộ spec §4).
 - Trả về các bước đúng thứ tự, nơi cần đến, thời gian **dự kiến**, kèm mã nguồn playbook (`PB-xx`) và ngày xem nguồn.
 - Biết nói "không có thông tin này trong nguồn" và chỉ cách tìm chính thức (US-10).
 - **Lỡ chuyến bay / chuyến bị hoãn-huỷ:** hỏi lại nguyên nhân và loại vé trước khi gợi ý các bước (ra quầy hãng, kiểm tra quyền lợi, chuyến thay thế); không hứa bồi thường khi chưa biết nguyên nhân (US-16, US-17).
