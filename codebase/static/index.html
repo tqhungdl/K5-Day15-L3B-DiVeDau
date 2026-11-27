@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Travel SOS</title>
+<link rel="stylesheet" href="styles.css?v=3">
+</head>
+<body>
+
+<!-- Màn chào + chọn ngôn ngữ (wireframe 3.1) -->
+<section id="welcome" class="screen">
+  <div class="welcome-card">
+    <div class="logo">🧭 Travel SOS</div>
+    <p id="welcome-line" class="welcome-line">We're here when your trip doesn't go to plan.</p>
+    <p id="welcome-ask" class="welcome-ask">First — which language should I reply in?</p>
+    <div id="lang-buttons" class="lang-buttons"></div>
+    <p id="welcome-note" class="welcome-note">I only suggest steps — every action is yours to decide.</p>
+  </div>
+</section>
+
+<!-- Màn chat chính (wireframe 3.2–3.8) -->
+<section id="chat" class="screen hidden">
+  <header class="topbar">
+    <span class="topbar-title">TRAVEL SOS AGENT</span>
+    <div class="topbar-controls">
+      <div id="mode-toggle" class="mode-toggle">
+        <button id="mode-chat" data-mode="chat">💬 Chat</button>
+        <button id="mode-voice" data-mode="voice">🔊 Voice</button>
+      </div>
+      <select id="lang-select" title="Reply language"></select>
+    </div>
+  </header>
+
+  <!-- Danh mục câu hỏi thường gặp (tab) -->
+  <nav id="category-tabs" class="tabs"></nav>
+
+  <!-- Khung "sổ tay" chứa hội thoại -->
+  <div class="notebook">
+    <main id="messages" class="messages">
+      <div class="agent-bubble greeting"></div>
+    </main>
+
+    <div id="quick-chips" class="quick-chips"></div>
+
+    <footer class="composer">
+      <input id="input" type="text" autocomplete="off">
+      <button id="mic" aria-label="Voice input" title="Voice input">🎙️</button>
+      <button id="mic-off" class="hidden" aria-label="Turn mic off">⏹</button>
+      <button id="send" aria-label="Send">➤</button>
+    </footer>
+  </div>
+</section>
+
+<!-- Nhân vật cô gái áo dài — miệng động khi agent đang nói -->
+<div id="avatar" class="avatar" title="Travel SOS">
+  <div class="avatar-frame">
+    <img src="avatar.png" alt="Travel SOS assistant">
+    <!-- Lớp phủ miệng: khi KHÔNG nói, đè miệng mở của ảnh bằng miệng nhắm đang cười -->
+    <svg class="mouth-overlay" viewBox="0 0 100 149" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="blend-patch" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="0.5"/>
+        </filter>
+      </defs>
+      <g id="mouth-idle" filter="url(#blend-patch)">
+        <ellipse cx="48.2" cy="34.9" rx="3.6" ry="2.3" fill="#f8d5c2"/>
+        <path d="M45.9 34.7 Q48.2 36.6 50.5 34.7" stroke="#c96a5f" stroke-width=".7" fill="none" stroke-linecap="round"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<!-- Xem nguồn PB-xx (wireframe 3.8) -->
+<div id="source-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <span id="source-title">Source</span>
+      <button id="source-close" aria-label="Close">✕</button>
+    </div>
+    <p class="modal-note" id="source-note"></p>
+  </div>
+</div>
+
+<script src="app.js?v=3"></script>
+</body>
+</html>
