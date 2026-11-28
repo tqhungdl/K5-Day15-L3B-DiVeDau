@@ -30,11 +30,13 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 
 | Hướng | Bao nhiêu người gặp | Bao nhiêu lần / tháng | Mỗi lần tốn gì | Impact / tháng | Làm kịp không | Chọn? |
 |---|---|---|---|---|---|---|
-| Mất hộ chiếu | __ (chưa có nguồn tách theo loại) | __ | gần 1 tuần theo lời kể (P1, 1 trường hợp) | __ | Có: quy trình 3 bước, tra được từ nguồn công khai | **Chính** |
+| Mất hộ chiếu | Khoảng 440 lượt khách tiềm năng/tháng *(tự ước tính)* | 1 sự cố/lượt khách gặp sự cố *(tự ước tính)* | Gần 1 tuần xử lý theo lời kể P1 (1 trường hợp) | Khoảng 110 phút tiết kiệm/tháng ở kịch bản cơ sở *(tự ước tính)* | Có: quy trình 3 bước, tra được từ nguồn công khai | **Chính** |
 | Lỡ / huỷ chuyến bay | __ | __ | gần 4 giờ chờ (P2, 1 trường hợp) | __ | Một phần: quy định khác theo hãng, nguồn chưa chốt (PRD §9) | Luồng phụ |
 | Khách sạn huỷ phòng | __ | __ | 2–3 giờ (P3, 1 trường hợp) | __ | Một phần: chính sách khác theo nền tảng, nguồn chưa chốt | Luồng phụ |
 
-- **Impact / tháng** của hướng chọn = __ người × __ lần × __ phút = __. Đã có: khoảng 8.800 người gặp sự cố mọi loại / tháng = 21,2 triệu lượt khách quốc tế 2025 ([Báo Chính phủ](https://en.baochinhphu.vn/print/foreign-arrivals-soar-to-record-high-in-2025-111260106100233228.htm), xem 27/11/2026) ÷ 12 × 0,5% *(tự ước tính)*; 21,2 triệu là số lượt, không phải số người. Tỉ lệ riêng của mất hộ chiếu và số phút tiết kiệm được: chưa có.
+- **Quy mô tiềm năng:** 21,2 triệu lượt khách quốc tế năm 2025 ([Báo Chính phủ](https://en.baochinhphu.vn/print/foreign-arrivals-soar-to-record-high-in-2025-111260106100233228.htm), xem 27/11/2026) ÷ 12 × 0,5% gặp sự cố × 5% sự cố mất hộ chiếu ≈ 440 lượt khách gặp mất hộ chiếu/tháng. Hai tỷ lệ là giả định *(tự ước tính)*. Một người có thể góp nhiều lượt khách vào thống kê.
+- **Impact/tháng, kịch bản cơ sở:** khoảng 440 lượt khách × 5% sử dụng × 1 tác vụ/sự cố × 50% tỷ lệ đạt tham chiếu × 10 phút/tác vụ thành công ≈ **110 phút/tháng**, tương đương **0,25 phút/người dùng/tháng** khi tính bình quân trên 440 người dùng mọi tính năng trong mô phỏng. Tỷ lệ sử dụng, số tác vụ và thời gian tiết kiệm là giả định *(tự ước tính)*. 50% là tỷ lệ đạt chung của lượt `run-3`, dùng làm tham chiếu cho kịch bản.
+- **Phần thời gian có thể tiết kiệm:** tra nơi trình báo, thứ tự xử lý và giấy tờ cần chuẩn bị. [P1](evidence/interviews/P1.md) ghi nhận khó khăn khi trình báo và thời gian xử lý gần một tuần qua lời kể; nhóm chưa đo số phút TravelSOS tiết kiệm. Với giả định 5–20 phút mỗi tác vụ thành công, kết quả là **55–220 phút/tháng** khi giữ các đầu vào khác như kịch bản cơ sở.
 - Hướng ĐÃ LOẠI + vì sao: khách sạn đòi thêm tiền (US-19, để "nếu có thêm 1 tuần"); khách Việt mất hộ chiếu ở nước ngoài (ngoài người dùng chính, quy trình khác).
 - Số lần / tháng của từng kiểu người dùng (persona ở §8, *tự ước tính*): hỏi một lần 1 phiên · sự cố trong ngày 1 phiên · mất hộ chiếu nhiều ngày 3 phiên.
 
@@ -176,7 +178,7 @@ Thiết kế theo §4 và `docs/wireframe.md`. Giao diện web chạy bằng `py
 - Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-1.csv` (50 phiên, token đo trên `gpt-5.4-nano`)
 - Chi phí / task thành công: $0.00012 (`gpt-6-luna`) · $0.0012 (`gpt-6.1-terra`)
 - Chi phí / tháng ở quy mô thật (`gpt-6-luna`): thấp $0.0096 · cơ sở $0.047 · cao $0.094; (`gpt-6.1-terra`): $0.096 · $0.47 · $0.94 → chi tiết `cost/cost-estimate.md`
-- So với impact / người / tháng (§2): impact chưa tính được. Chi phí model rất nhỏ, nhưng chưa đáng đưa vào dùng thật vì chất lượng chưa đạt chuẩn (50% so với ≥ 80%).
+- So với impact / người / tháng (§2): ở kịch bản cơ sở, lợi ích riêng của nhánh mất hộ chiếu ước khoảng 0,25 phút/người dùng/tháng trên 440 người dùng mọi tính năng. Chi phí model là $0.00011–$0.0011/người dùng/tháng. Cần sửa và đo lại trước khi triển khai vì tỷ lệ đạt 50% còn dưới ngưỡng 80%.
 
 ## §9. Rủi ro & an toàn
 - **Dữ liệu:**
@@ -218,6 +220,7 @@ Thiết kế theo §4 và `docs/wireframe.md`. Giao diện web chạy bằng `py
 | 28/11 | Điền §0–§3 (bản nháp, nhóm chưa duyệt) và `eval/report.md` §1–§2 | Chuẩn bị CP4, lấy từ `evidence/`, PRD và `eval/run-1.csv`; không đổi §7, câu thử, metric |
 | 28/11 trưa | Chạy lượt 2 (`run-3`) và `simulate-1`; điền §7 kết quả, §8, §10; ghi rõ ở §4, §6 phần đã code khác thiết kế | Số đo từ `eval/run-3.csv`, `cost/simulate-1-summary.md`; không đổi chuẩn đạt, câu thử, metric |
 | 28/11 sáng | Khôi phục `eval/run-1.csv`, `traces/run-1.jsonl` (30 câu, 10/30); lượt 15 câu đổi tên thành `run-1-bo15` | File lượt 1 bị ghi đè khi merge PR #15; không sửa nội dung lượt nào |
+| 28/11 | Bổ sung kịch bản impact mất hộ chiếu và chuẩn bị phiếu chấm độc lập | Dựa trên P1, giả định có ghi nhãn ở §2 và năm đầu ra của `run-3` |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)** (sửa theo góp ý — không sửa chuẩn "đạt", câu thử, số bằng chứng, kết quả các lượt đã chạy)
 

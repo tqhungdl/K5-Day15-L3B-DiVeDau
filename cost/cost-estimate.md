@@ -40,7 +40,7 @@ Chi phí / task thành công = chi phí trung bình mỗi phiên ÷ tỉ lệ đ
 
 ## 3. So với impact
 
-- Impact / người / tháng (`spec.md` §2): **chưa tính được**, chưa có số phút tiết kiệm và tỉ lệ từng loại sự cố.
+- Impact / người / tháng ([spec §2](../spec.md#§2-impact--quyết-định-chọn-guide-13)): riêng nhánh mất hộ chiếu tiết kiệm khoảng **110 phút/tháng**, tương đương **0,25 phút/người dùng/tháng** tính trên 440 người dùng mọi tính năng ở kịch bản cơ sở *(tự ước tính)*. Với 5–20 phút tiết kiệm mỗi tác vụ thành công, tổng lợi ích ước khoảng 55–220 phút/tháng.
 - Chi phí / người / tháng (cơ sở): $0.00011 (`gpt-6-luna`) · $0.0011 (`gpt-6.1-terra`).
 - **Kết luận một dòng — đáng làm không:** chi phí model không phải rào cản, nhưng **chưa đáng đưa vào dùng thật**: tỉ lệ đạt 50% (chuẩn ≥ 80%), câu `tu_choi` đạt 2/6 (chuẩn 100%) → sửa và đo lại.
 
