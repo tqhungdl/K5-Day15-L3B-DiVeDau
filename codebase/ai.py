@@ -43,24 +43,47 @@ def load_env(path=os.path.join(ROOT, ".env")):
 load_env()
 MODEL_PROVIDER = (os.environ.get("MODEL_PROVIDER") or "fake").strip().lower()
 MODEL_NAME = (os.environ.get("MODEL_NAME") or "").strip()
-API_KEY = (os.environ.get("API_KEY") or "").strip()
+API_KEY = (os.environ.get("API_KEY") or os.environ.get("OPENAI_API_KEY") or "").strip()
 
 SHOW_RAW = False   # đổi thành True để in nguyên phản hồi của API khi cần tìm tên trường
 
 
 def post_json(url, headers, body, timeout=60):
-    """Gửi POST JSON, trả về JSON phản hồi. Chỉ dùng thư viện chuẩn (urllib)."""
-    req = urllib.request.Request(
-        url, data=json.dumps(body).encode("utf-8"), method="POST",
-        headers=dict({"Content-Type": "application/json"}, **headers))
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            data = json.loads(r.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
-        raise RuntimeError("HTTP %d: %s" % (e.code, e.read().decode("utf-8", "replace")[:300]))
-    if SHOW_RAW:
-        print(json.dumps(data, ensure_ascii=False, indent=2)[:3000])
-    return data
+    """Gửi POST JSON, trả về JSON phản hồi. Chỉ dùng thư viện chuẩn (urllib).
+    Lỗi 503 (model quá tải, ngắt quãng) thử lại tối đa 2 lần, cách 5 giây."""
+    import time
+    last_err = None
+    for attempt in range(3):
+        req = urllib.request.Request(
+            url, data=json.dumps(body).encode("utf-8"), method="POST",
+            headers=dict({"Content-Type": "application/json"}, **headers))
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                data = json.loads(r.read().decode("utf-8"))
+            if SHOW_RAW:
+                print(json.dumps(data, ensure_ascii=False, indent=2)[:3000])
+            return data
+        except urllib.error.HTTPError as e:
+            body_txt = e.read().decode("utf-8", "replace")[:300]
+            if e.code == 503 and attempt < 2:
+                last_err = RuntimeError("HTTP 503: %s" % body_txt)
+                time.sleep(5)
+                continue
+            raise RuntimeError("HTTP %d: %s" % (e.code, body_txt))
+    raise last_err
+
+
+URL_OPENAI = "https://api.openai.com/v1/chat/completions"
+
+
+def call_openai(system, user):
+    """Gọi OpenAI (và nhà cung cấp API tương thích OpenAI), trả {text, tokens_in, tokens_out}."""
+    messages = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": user}]
+    data = post_json(URL_OPENAI, {"Authorization": "Bearer " + API_KEY},
+                     {"model": MODEL_NAME, "messages": messages})
+    u = data["usage"]
+    return {"text": data["choices"][0]["message"]["content"],
+            "tokens_in": u["prompt_tokens"], "tokens_out": u["completion_tokens"]}
 
 
 URL_GEMINI = "https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent" % MODEL_NAME
@@ -95,10 +118,10 @@ def call_model(system: str, user: str) -> dict:
     if MODEL_PROVIDER == "fake":
         last = (user.strip().splitlines() or [""])[-1]
         return {"text": "[câu trả lời giả — chưa nối model] " + last[:60], "model": "fake", "tokens_in": 0, "tokens_out": 0}
-    if MODEL_PROVIDER == "gemini":
+    if MODEL_PROVIDER == "openai":
+        r = call_openai(system, user)
+    elif MODEL_PROVIDER == "gemini":
         r = call_gemini(system, user)
-    elif MODEL_PROVIDER == "openai":
-        r = call_provider(system, user)   # xem docs/connect-model.md mục 2.1 khi cần nối
     elif MODEL_PROVIDER == "anthropic":
         r = call_provider(system, user)   # xem docs/connect-model.md mục 2.2 khi cần nối
     elif MODEL_PROVIDER == "ollama":
