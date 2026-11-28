@@ -199,6 +199,7 @@ Thiết kế theo §4 và `docs/wireframe.md`; **chưa dựng giao diện, chưa
 | 27/11, sau CP2 | Điền §5, §6, §9 | Hoàn thiện spec theo §4 và bộ câu thử B01–B15; không đổi §7, câu thử, metric |
 | 27/11, sau CP2 | Điền `cost/personas.yaml`: 3 persona, 3 kịch bản người dùng, giá gpt-6-luna và gpt-6.1-terra | Chuẩn bị mô phỏng chi phí §8; phần chưa có nguồn ghi *(tự ước tính)* |
 | 28/11 sáng | Điền phần đầu vào của `cost/cost-estimate.md` §1 | Chuẩn bị §8; chưa có kết quả mô phỏng |
+| 28/11 sáng | Khôi phục `eval/run-1.csv`, `traces/run-1.jsonl` (30 câu, 10/30); lượt 15 câu đổi tên thành `run-1-bo15` | File lượt 1 bị ghi đè khi merge PR #15; không sửa nội dung lượt nào |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)** (sửa theo góp ý — không sửa chuẩn "đạt", câu thử, số bằng chứng, kết quả các lượt đã chạy)
 
