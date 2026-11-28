@@ -50,6 +50,10 @@
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.
 
+Ghi chú 28/11:
+- Khi merge PR #15, `eval/run-1.csv` và `traces/run-1.jsonl` bị thay bằng một lượt khác chạy trên bộ 15 câu (`run-1@20261128-091110`, gpt-4o-mini, 5/15). Đã khôi phục lượt 1 ở bảng trên từ commit `220ad4e`; lượt 15 câu giữ ở `eval/run-1-bo15.csv`, `traces/run-1-bo15.jsonl`.
+- `eval/run-2.csv` (`run-2@20261128-092056`, 15/15) cũng chạy trên bộ 15 câu, 12/15 câu không gọi model, nên không dùng để so với lượt 1.
+
 ## 6. Lỗi chính
 
 Tóm 2–3 dòng từ `eval/report.md`: nhóm lỗi lớn nhất · đã sửa gì · còn lại gì.
