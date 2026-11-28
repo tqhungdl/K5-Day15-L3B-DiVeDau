@@ -11,8 +11,10 @@ Nguồn sự thật: data/playbook.json (mã PB-xx, PRD §7). Chưa nối model 
 từ context playbook, lỗi model thì rơi về mẫu (vẫn có nguồn, không bịa).
 Ngôn ngữ trả lời: frontend gửi kèm ghi chú cuối tin — mặc định tiếng Anh (PRD bước 1).
 """
+import re
+
 from ai import call_model, MODEL_PROVIDER
-from tools import classify_situation, search_playbook, check_output
+from tools import classify_situation, search_playbook, check_output, load_playbook
 from tracing import note
 
 # Hướng dẫn hệ thống cho model (dùng khi MODEL_PROVIDER khác "fake")
@@ -20,6 +22,8 @@ SYSTEM = """You are Travel SOS, a travel-assistance advisor for foreign tourists
 Scope ONLY: lost passport in Vietnam, missed/delayed/cancelled flights, hotel room
 cancellations, emergency phrases in Vietnamese. Everything else: refuse briefly.
 Rules:
+- Keep EVERY reply to at most 3 short sentences, then end with one question asking
+  whether to continue or stop (vd "Continue, or stop here?" / "Tiếp không hay dừng?").
 - Follow the 3-step order: police report where lost -> embassy (emergency travel
   document) -> exit visa at the Immigration Department.
 - If key details are missing, ONLY ask for them — do not give the steps yet.
@@ -140,6 +144,112 @@ def _parse(text: str):
     return lang, "\n".join(lines).strip()
 
 
+# UI không lưu phiên phía server (spec §4) — mỗi lượt gửi ghép tin nhắn trước của
+# người dùng vào input, phân tách bằng hai dòng đánh dấu dưới đây.
+_PREV_MARK = "--- lượt trước (bối cảnh) ---"
+_CURRENT_MARK = "--- lượt này ---"
+
+
+def _split_turns(text: str):
+    """Tách bối cảnh lượt trước (UI ghép vào input) và lượt hiện tại.
+    Input không có đánh dấu (eval gửi thẳng một tin) → tất cả là lượt hiện tại."""
+    if _CURRENT_MARK in text:
+        prev, _, cur = text.partition(_CURRENT_MARK)
+        return prev.replace(_PREV_MARK, "").strip(), cur.strip()
+    return "", text.strip()
+
+
+def _user_text(prev: str) -> str:
+    """Những gì NGƯỜI DÙNG nói trong bối cảnh (bỏ dòng [agent] — chỉ dùng để đếm bước)."""
+    return "\n".join(ln for ln in prev.splitlines()
+                     if not ln.strip().startswith("[agent]")).strip()
+
+
+_AGENT_STEP_RE = re.compile(
+    r"^\[agent\]\s*\**\s*(?:STEP|BƯỚC)\s*([123])", re.IGNORECASE | re.MULTILINE)
+
+
+def _steps_told(ctx_lower: str) -> set:
+    """Các bước đã ĐƯA — chỉ đếm số bước MỞ ĐẦU một câu trả lời agent trong bối cảnh
+    ("[agent] STEP 2 · …"). Không đếm số bước chỉ bị NHẮC trong câu hỏi cuối bước
+    ("hay mình sang bước 2?") — nếu đếm cả thì agent bỏ mất bước kế tiếp."""
+    return {int(m) for m in _AGENT_STEP_RE.findall(ctx_lower)}
+
+
+# Người dùng xin thêm chi tiết về một bước đã đưa → mở rộng đúng bước đó, không sang bước kế
+_MORE_DETAIL_RE = ("more detail", "more info", "explain", "tell me more", "chi tiết",
+                   "thêm thông tin", "giải thích", "nói rõ")
+# Người dùng xin tóm tắt → gói cả quy trình trong 3 câu, không sang bước kế
+_SUMMARY_RE = ("summarize", "summary", "recap", "tóm tắt", "tổng kết", "tóm lại", "ngắn gọn")
+# Cảm ơn / chào kết thúc ở cuối luồng → trả lời ngắn rồi dừng, không lặp lại hướng dẫn
+_THANKS_RE = ("thank", "thanks", "thx", "great", "perfect", "bye", "goodbye",
+              "cảm ơn", "cảm ơn", "ok rồi", "xong rồi", "tạm biệt")
+_PB_BY_STEP = {1: ("PB-01", "PB-02"), 2: ("PB-03",), 3: ("PB-04",)}
+
+
+def _step_num_of(msg_lower: str) -> int:
+    m = re.search(r"\b(?:step|bước)\s*([123])\b", msg_lower)
+    return int(m.group(1)) if m else 0
+
+
+def _first_sentences(text: str, n: int) -> str:
+    """Lấy n câu đầu của một đoạn (cắt ở . ! ?) — để gói chi tiết trong ≤3 câu."""
+    parts = re.split(r"(?<=[.!?])\s+", text.strip())
+    return " ".join(p.strip() for p in parts[:n] if p.strip())
+
+
+def _step_detail(step: int, lang: str) -> str:
+    """Chi tiết thêm của một bước — rút NGUYÊN VĂN từng câu từ playbook (có nguồn,
+    không bịa), gói trong ≤3 câu rồi hỏi tiếp/dừng, đúng luật phản hồi chung."""
+    entries = load_playbook()["entries"]
+    codes = _PB_BY_STEP.get(step, ("PB-01",))
+    picked = [e for e in entries if e["code"] in codes]
+    per = [2, 1] if len(picked) > 1 else [3]   # 2 mã → 2 câu + 1 câu; 1 mã → 3 câu
+    q = ("❓ Tiếp, hay dừng ở đây?" if lang == "vi"
+         else "❓ Continue, or stop here?")
+    sents = []
+    for e, n in zip(picked, per):
+        text = e["text_vi"] if lang == "vi" else e["text"]
+        sents.append(_first_sentences(text, n))
+    tags = " ".join("[%s]" % c for c in codes)
+    return "\n".join(sents) + "\n" + tags + "\n" + q
+
+
+_QUESTION_RE = re.compile(
+    r"\?$|^(what|whats|where|when|how|which|who|why|is|are|can|could|should|do|does|did)\b"
+    r"|^(ở đâu|bao nhiêu|bao lâu|như thế nào|ra sao|sao|có .* không|là gì)\b", re.IGNORECASE)
+
+
+def _is_question(cur_l: str) -> bool:
+    """Người dùng đang HỎI một câu (vd "what is the website?") thay vì bảo tiếp/ngừng."""
+    return bool(_QUESTION_RE.search(cur_l.strip()))
+
+
+def _answer_from_step(step: int, full: str, cur: str, lang: str) -> str:
+    """Trả lời câu hỏi của người dùng về bước đang nói — CHỈ dùng căn cứ của bước đó
+    (playbook, có mã PB), tối đa 3 câu rồi hỏi tiếp/dừng. Lỗi model → trả '' để rơi
+    về luồng từng bước như cũ."""
+    entries = load_playbook()["entries"]
+    picked = [e for e in entries if e["code"] in _PB_BY_STEP.get(step, ("PB-01",))]
+    tkey, xkey = ("title_vi", "text_vi") if lang == "vi" else ("title", "text")
+    ctx = "\n\n".join("[%s] %s\n%s" % (e["code"], e[tkey], e[xkey]) for e in picked)
+    prompt = ("Playbook context — the ONLY source, do not use anything else:\n%s\n\n"
+              "Conversation so far (what the user already said):\n%s\n\n"
+              "User question:\n%s\n\n"
+              "Answer ONLY the user's question, from the context above. At most 3 short "
+              "sentences, then one question asking whether to continue or stop. If the "
+              "context has no URL/number, say it is not in your sources and how to look it "
+              "up officially — never invent. Reply language: %s."
+              % (ctx, full, cur, "Vietnamese" if lang == "vi" else "English"))
+    try:
+        text = call_model(SYSTEM, prompt)["text"]
+    except Exception as e:
+        note("model lỗi khi trả lời câu hỏi về bước %s (%s)" % (step, type(e).__name__))
+        return ""
+    cleaned = check_output(text, [e["code"] for e in picked])["output"]
+    return cleaned if cleaned.strip() else ""
+
+
 def _has(text_lower: str, needles) -> bool:
     return any(n in text_lower for n in needles)
 
@@ -229,13 +339,60 @@ T_EN = {
         "(up to ~5 working days, estimated). Sources: [PB-04]\n"
         "I can't check real-time opening hours — please confirm by phone before travelling there."
     ),
-    "ask_passport": (
-        "Oh no — stay calm, I'll guide you step by step. First I need a few details:\n"
-        "1️⃣ Which city are you in right now?\n"
-        "2️⃣ Where did you lose the passport (same city, or somewhere else)?\n"
-        "3️⃣ What's your nationality?\n"
-        "(If your flight is within a day or two, tell me too — I'll be straight with you about the timing.)\n"
+    "ask_city": (
+        "Oh no — stay calm, I'll guide you step by step, one question at a time.\n"
+        "First: which city are you in right now?\n"
         "ℹ️ I won't guess on your behalf — wrong city means wrong guidance. Sources: [PB-01]"
+    ),
+    "ask_nationality": (
+        "Got it — you're in %(where)s. Next question: what's your nationality? "
+        "I need it to point you to the right embassy channel. Sources: [PB-01]"
+    ),
+    "lost_step1": (
+        "STEP 1 · Report the loss at the police station covering WHERE YOU LOST the passport "
+        "in %(where)s, and ask for the loss report (biên bản trình báo) plus a certified copy — "
+        "you need both later. Bring any photo ID and keep every paper they give you. "
+        "Sources: [PB-01] [PB-02]\n"
+        "❓ Continue to step 2, or stop here?"
+    ),
+    "lost_step2": (
+        "STEP 2 · Take the loss report to the %(nat)s embassy/consulate in Vietnam to apply "
+        "for an Emergency Travel Document — bring any photo ID too. "
+        "I can't verify addresses or phone numbers in real time — check the official embassy "
+        "website before you go. Sources: [PB-03]\n"
+        "❓ Continue to step 3, or stop here?"
+    ),
+    "lost_step3": (
+        "STEP 3 · With the emergency travel document, apply for an exit visa at the Immigration "
+        "Department (Cục/Phòng Quản lý Xuất nhập cảnh) in %(where)s so you can leave Vietnam "
+        "legally. Processing time varies — treat any figure as an estimate and confirm on site. "
+        "Sources: [PB-04]\n"
+        "❓ That was the last step — anything else, or stop here?"
+    ),
+    "lost_all_done": (
+        "That's all 3 steps: ① police loss report → ② Emergency Travel Document at the "
+        "%(nat)s embassy → ③ exit visa at the Immigration Department. Tell me which step "
+        "you'd like to go back to, or ask anything else. Sources: [PB-01] [PB-03] [PB-04]"
+    ),
+    "lost_summary": (
+        "In short: 1) report the loss at the police station covering where you lost the "
+        "passport in %(where)s, and get the loss report (biên bản trình báo) plus a "
+        "certified copy [PB-01]. "
+        "2) Take that report to the %(nat)s embassy/consulate to apply for an Emergency "
+        "Travel Document [PB-03]. "
+        "3) Use the emergency travel document to apply for an exit visa at the Immigration "
+        "Department (Cục Quản lý Xuất nhập cảnh) so you can leave Vietnam [PB-04]."
+    ),
+    "lost_summary_next": (
+        "Say \"continue\" when you're ready for step %(next)s."
+    ),
+    "lost_summary_done": (
+        "You've seen all 3 steps — tell me which one to go back to, or ask anything else."
+    ),
+    "lost_bye": (
+        "You're welcome — you have all 3 steps: police loss report, Emergency Travel "
+        "Document at the embassy, and exit visa at the Immigration Department. "
+        "Good luck, and safe travels. Sources: [PB-01] [PB-03] [PB-04]"
     ),
     "ask_flight": (
         "First, go to the airline's counter or call its hotline right away — they can see your options "
@@ -434,13 +591,58 @@ T_VI = {
         "(đến ~5 ngày làm việc — dự kiến). Nguồn: [PB-04]\n"
         "Mình không tra được giờ mở cửa thời gian thực — nhớ gọi xác nhận trước khi đi."
     ),
-    "ask_passport": (
-        "Ôi, bình tĩnh nhé, mình sẽ hướng dẫn từng bước. Trước hết mình cần biết vài điều:\n"
-        "1️⃣ Bạn đang ở tỉnh/thành nào?\n"
-        "2️⃣ Bạn mất hộ chiếu ở đâu (chỗ đang ở hay nơi khác)?\n"
-        "3️⃣ Bạn mang quốc tịch nào?\n"
-        "(Nếu chuyến bay của bạn trong vòng 1–2 ngày nữa thì nói luôn — mình nói thật với bạn về thời gian.)\n"
+    "ask_city": (
+        "Ôi, bình tĩnh nhé, mình sẽ hướng dẫn từng bước, mỗi lượt mình hỏi một câu thôi.\n"
+        "Trước hết: bạn đang ở tỉnh/thành nào?\n"
         "ℹ️ Mình không đoán thay bạn — sai địa phương thì hướng dẫn sẽ sai. Nguồn: [PB-01]"
+    ),
+    "ask_nationality": (
+        "Rồi, bạn đang ở %(where)s. Câu tiếp: bạn mang quốc tịch nào? "
+        "Mình cần biết để chỉ đúng cơ quan đại diện cho bạn. Nguồn: [PB-01]"
+    ),
+    "lost_step1": (
+        "BƯỚC 1 · Trình báo mất tại công an NƠI BỊ MẤT hộ chiếu ở %(where)s, xin biên bản "
+        "trình báo và bản sao chứng thực — cả hai đều cần về sau. "
+        "Mang theo giấy tờ có ảnh và giữ lại mọi giấy tờ họ đưa. Nguồn: [PB-01] [PB-02]\n"
+        "❓ Tiếp bước 2, hay dừng ở đây?"
+    ),
+    "lost_step2": (
+        "BƯỚC 2 · Mang biên bản đến Đại sứ quán/Lãnh sự quán %(nat)s tại Việt Nam để xin giấy "
+        "thông hành khẩn cấp, kèm giấy tờ có ảnh. "
+        "Mình không kiểm tra được địa chỉ/số điện thoại thời gian thực — bạn xem trên website "
+        "chính thức trước khi đi. Nguồn: [PB-03]\n"
+        "❓ Tiếp bước 3, hay dừng ở đây?"
+    ),
+    "lost_step3": (
+        "BƯỚC 3 · Có giấy thông hành rồi, xin thị thực xuất cảnh tại Cục/Phòng Quản lý Xuất "
+        "nhập cảnh ở %(where)s để hợp pháp rời Việt Nam. "
+        "Thời gian xử lý thay đổi — con số nào cũng chỉ là dự kiến, bạn xác nhận lại trực tiếp. "
+        "Nguồn: [PB-04]\n"
+        "❓ Hết bước cuối rồi — còn việc gì nữa, hay dừng ở đây?"
+    ),
+    "lost_all_done": (
+        "Đủ 3 bước rồi: ① biên bản trình báo → ② giấy thông hành tại đại sứ quán %(nat)s → "
+        "③ thị thực xuất cảnh tại Cục Quản lý Xuất nhập cảnh. Bạn muốn quay lại bước nào, "
+        "hay hỏi thêm gì về tình huống của mình? Nguồn: [PB-01] [PB-03] [PB-04]"
+    ),
+    "lost_summary": (
+        "Tóm lại: 1) trình báo mất tại công an nơi bị mất hộ chiếu ở %(where)s và xin biên "
+        "bản trình báo cùng bản sao chứng thực [PB-01]. "
+        "2) Mang biên bản đó đến Đại sứ quán/Lãnh sự quán %(nat)s để xin giấy thông hành "
+        "khẩn cấp [PB-03]. "
+        "3) Dùng giấy thông hành để xin thị thực xuất cảnh tại Cục/Phòng Quản lý Xuất nhập "
+        "cảnh, hợp pháp rời Việt Nam [PB-04]."
+    ),
+    "lost_summary_next": (
+        "Nói \"tiếp\" hoặc \"continue\" khi bạn sẵn sàng sang bước %(next)s."
+    ),
+    "lost_summary_done": (
+        "Bạn đã xem đủ 3 bước — muốn quay lại bước nào hay hỏi thêm gì thì cứ nói."
+    ),
+    "lost_bye": (
+        "Không có gì — bạn đã có đủ 3 bước: biên bản trình báo công an, giấy thông hành "
+        "tại đại sứ quán, và thị thực xuất cảnh tại Cục Quản lý Xuất nhập cảnh. "
+        "Chúc bạn xử lý thuận lợi và lên đường an toàn. Nguồn: [PB-01] [PB-03] [PB-04]"
     ),
     "ask_flight": (
         "Trước tiên, đến quầy của hãng hoặc gọi hotline ngay — họ thấy các phương án của bạn sớm nhất. "
@@ -607,11 +809,17 @@ def _t(key: str, lang: str) -> str:
 # ---------------------------------------------------------------------------
 
 def answer(text: str) -> dict:
-    lang, msg = _parse(text)
+    lang, raw = _parse(text)
+    ctx, msg = _split_turns(raw)
+    full = (_user_text(ctx) + "\n" + msg).strip()   # facts người dùng: lượt trước + lượt này
+    ctx_l = ctx.lower()                             # gồm cả [agent] — để đếm bước đã đưa
     msg_l = msg.lower()
-    topic = classify_situation(msg)["topic"]
+    full_l = full.lower()
+    topic = classify_situation(full)["topic"]
 
-    # Lớp 1 — khẩn cấp y tế/an ninh (US-22): nổi lên trước mọi thứ, không tư vấn y tế
+    # Lớp 1 — khẩn cấp y tế/an ninh (US-22): nổi lên trước mọi thứ, không tư vấn y tế.
+    # Chỉ đọc LƯỢT HIỆN TẠI: lượt trước đã xử lý khẩn cấp rồi, câu nối tiếp
+    # ("tôi đã gọi 115 rồi…") không được dính lại chữ của lượt cũ.
     if _has(msg_l, _EMERGENCY_RE):
         return {"output": _t("emergency", lang)}
 
@@ -631,24 +839,28 @@ def answer(text: str) -> dict:
 
     # Lớp 4 — luật cố định quyết định: các nhánh bắt buộc (hỏi lại, cảnh báo, nói thật,
     # giới hạn nguồn…) trả mẫu biên soạn sẵn từ playbook — không phụ thuộc model.
-    forced = _forced_answer(topic, msg, msg_l, lang)
+    # Đọc cả bối cảnh lượt trước: câu trả lời rời ("in Hanoi") cần facts từ lượt đầu.
+    forced = _forced_answer(topic, full, full_l, lang, ctx_l, msg_l)
     if forced is not None:
         return {"output": forced}
 
     # Lớp 4c — thông tin đủ: model soạn câu trả lời từ căn cứ playbook; thiếu yếu tố
     # bắt buộc (kiểm bằng check_output) hoặc lỗi model → rơi về mẫu (vẫn có nguồn, không bịa).
-    fallback = _full_answer_template(topic, msg_l, lang)
+    fallback = _full_answer_template(topic, full_l, lang)
     if MODEL_PROVIDER != "fake":
-        composed = _model_compose(fallback, msg, topic, lang)
+        composed = _model_compose(fallback, full, topic, lang)
         if composed:
             return {"output": composed}
         note("model không soạn được theo yêu cầu — dùng mẫu playbook")
     return {"output": fallback}
 
 
-def _forced_answer(topic: str, msg: str, msg_l: str, lang: str):
+def _forced_answer(topic: str, msg: str, msg_l: str, lang: str, ctx_l: str = "", cur_l: str = ""):
     """Nhánh luật trả mẫu cố định (không cần model). Trả None nếu thông tin đã đủ,
-    chuyển sang luồng soạn câu trả lời đầy đủ."""
+    chuyển sang luồng soạn câu trả lời đầy đủ. msg = facts người dùng (lượt trước +
+    lượt này); ctx_l = bối cảnh gồm cả câu trả lời agent (đếm bước); cur_l = CHỮ
+    NGƯỜI DÙNG gõ ở lượt này — ý định kiểu "more detail" chỉ đọc cái này, không đọc
+    câu hỏi của agent trong bối cảnh."""
     if topic == "lost_passport":
         # US-09: tìm lại được hộ chiếu
         if _has(msg_l, _FOUND_RE):
@@ -665,17 +877,56 @@ def _forced_answer(topic: str, msg: str, msg_l: str, lang: str):
         # Thất lạc ở sân bay → đầu mối công an cửa khẩu / bàn công an trong nhà ga
         if _has(msg_l, ("sân bay", "airport", "nhà ga", "terminal")):
             return _t("airport_lost", lang)
-        # US-05: thiếu thông tin → hỏi lại, không đoán
+        # US-05: thiếu thông tin → hỏi lại TỪNG CÂU MỘT lượt, không đoán, không hỏi lại
+        # cái đã có (bối cảnh lượt trước nằm trong msg_l rồi). Quy trình cần địa phương
+        # trước (nơi mất), rồi quốc tịch để chỉ đúng cơ quan đại diện (US-07).
         nat = _nat_of(msg_l)
         city = _city_of(msg_l)
-        if not city or not nat:
-            return _t("ask_passport", lang)
+        if not city:
+            return _t("ask_city", lang)
+        if not nat:
+            return _t("ask_nationality", lang) % {"where": _pretty(city)}
         # Quốc tịch ngoài 3 nước mẫu → nói rõ giới hạn (US-10), không bịa địa chỉ/điện thoại
         if nat not in _NAT_IN_PLAYBOOK:
             return _t("not_in_source", lang)
         # US-11: ngày lễ → trả theo địa bàn nơi mất + chỉ cách xác minh giờ, không bịa giờ
         if _has(msg_l, _HOLIDAY_RE):
             return _t("lost_holiday", lang) % {"where": _pretty(city), "nat": _pretty(nat)}
+        # Hội thoại nhiều lượt (có bối cảnh từ UI) → đưa TỪNG BƯỚC MỘT lượt, cuối bước
+        # hỏi người dùng cần thêm gì không. Hỏi trọn trong một tin (không bối cảnh —
+        # eval, hoặc mô tả đủ ngay từ đầu) → trả đủ các bước như cũ, khớp chuẩn "đạt" §7.
+        if ctx_l:
+            done = _steps_told(ctx_l)
+            where = _pretty(city)
+            # Cảm ơn / chào kết thúc → trả lời ngắn rồi dừng, không lặp lại hướng dẫn
+            if cur_l and _has(cur_l, _THANKS_RE):
+                return _t("lost_bye", lang)
+            # "summarize" → tóm tắt cả quy trình trong 3 câu + đang ở đâu, không sang bước kế
+            if cur_l and _has(cur_l, _SUMMARY_RE):
+                nxt = next((i for i in (1, 2, 3) if i not in done), 0)
+                out = _t("lost_summary", lang) % {"where": where, "nat": _pretty(nat)}
+                if nxt:
+                    out += "\n" + (_t("lost_summary_next", lang) % {"next": nxt})
+                else:
+                    out += "\n" + _t("lost_summary_done", lang)
+                return out
+            # "I need more detail" → mở rộng ĐÚNG bước đang nói (mặc định: bước gần nhất),
+            # lấy nguyên văn playbook — không lướt sang bước kế. Chỉ đọc lượt hiện tại.
+            if cur_l and _has(cur_l, _MORE_DETAIL_RE):
+                return _step_detail(_step_num_of(cur_l) or (max(done) if done else 1), lang)
+            # Câu hỏi về bước đang nói ("what is the website?") → trả lời từ căn cứ của
+            # ĐÚNG bước đó — không quay lại hỏi từ đầu, không bỏ qua câu hỏi
+            if cur_l and _is_question(cur_l) and MODEL_PROVIDER != "fake":
+                qa = _answer_from_step(max(done) if done else 1, msg, cur_l, lang)
+                if qa:
+                    return qa
+            if 1 not in done:
+                return _t("lost_step1", lang) % {"where": where}
+            if 2 not in done:
+                return _t("lost_step2", lang) % {"nat": _pretty(nat), "where": where}
+            if 3 not in done:
+                return _t("lost_step3", lang) % {"where": where}
+            return _t("lost_all_done", lang) % {"nat": _pretty(nat)}
         return None   # đủ thông tin → luồng trả lời đầy đủ
 
     if topic == "missed_flight":
@@ -771,6 +1022,9 @@ def _model_compose(fallback: str, msg: str, topic: str, lang: str) -> str:
             " or ".join(g) for g in _COMPOSE_ASK[topic])
     prompt = ("Playbook context:\n%s\n\nUser message:\n%s\n\n"
               "Compose the answer following the SYSTEM rules. The answer MUST include:\n%s%s\n"
+              "The answer MUST be at most 3 short sentences in total (source tags like [PB-01] "
+              "don't count) and MUST end with one question asking whether to continue or stop, "
+              "e.g. \"Continue, or stop here?\" (tiếng Việt: \"Tiếp không hay dừng?\"). "
               "If the context does not contain some information, say it is not in your sources — "
               "never invent it."
               % (ctx, msg, must_lines, ask_lines))
