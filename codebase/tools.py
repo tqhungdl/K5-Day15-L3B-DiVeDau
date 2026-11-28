@@ -54,7 +54,9 @@ def classify_situation(text: str) -> dict:
     ]
     best, best_hits = "unknown", 0
     for topic, kws in rules:
-        hits = sum(1 for kw in kws if kw in t)
+        # cụm dài, cụ thể (vd "bị huỷ phòng") tính nặng hơn từ ngắn ("bị huỷ") để
+        # không nhầm huỷ phòng → chuyến bay
+        hits = sum(2 if len(kw) > 8 else 1 for kw in kws if kw in t)
         if hits > best_hits:
             best, best_hits = topic, hits
     return {"topic": best}
