@@ -11,10 +11,10 @@
 
 | STT | Họ và tên | Mã học viên | Vai trò | Phần việc chính |
 |---|---|---|---|---|
-| 1 | Trần Quang Hưng | 2A202603767 | Đội trưởng | ____ |
-| 2 | Nguyễn Tiến Đạt | 2A202603752 | Thành viên | ____ |
-| 3 | Lương Thị Hồng Hạnh | 2A202603748 | Thành viên | ____ |
-| 4 | Đào Thị Ngọc Ánh | 2A202603790 | Thành viên | ____ |
+| 1 | Trần Quang Hưng | 2A202603767 | Đội trưởng | Điều phối repo (merge PR), đồng bộ evidence, front-end |
+| 2 | Nguyễn Tiến Đạt | 2A202603752 | Thành viên | Spec (thiết kế §4, chuẩn đạt §7, impact), canvas, chi phí |
+| 3 | Lương Thị Hồng Hạnh | 2A202603748 | Thành viên | Code bản chạy thử (backend), nối model, chạy eval lượt 1–2 |
+| 4 | Đào Thị Ngọc Ánh | 2A202603790 | Thành viên | Bộ câu thử benchmark (30 câu), chấm cột pass |
 
 **Quy tắc điền**
 - **Lớp:** `L3A` hoặc `L3B`. **Track:** một chữ `A` (EdTech), `B` (Y tế), `C` (Du lịch), `D` (Thương mại điện tử), `E` (Tài chính) hoặc `F` (Làn khác). **Link repo:** link GitHub công khai của nhóm.
