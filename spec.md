@@ -1,36 +1,47 @@
-# AI SPEC — [Tên lát cắt] · Nhóm [tên nhóm] · Phòng [XXX] · Zone [X]
+# AI SPEC — Travel SOS · Nhóm Đi về đâu · Phòng [XXX] · Zone [X]
 
 > Mốc nộp: §7 chốt chuẩn "đạt" tại **CP2 19:30 Thứ Sáu 27/11** · §0–§7 nộp **CP3 10:00 Thứ Bảy 28/11** · đủ §0–§10 **CP4 14:30 Thứ Bảy 28/11** · §10 changelog ghi tiếp đến **23:59 Thứ Bảy 28/11**.
 > Đầu mỗi mục ghi bước guide (`02-guide.md` trong repo đề) chỉ cách điền. Mỗi mục ngắn, có số và nguồn; chi tiết để ở file được trỏ tới. Xoá dòng hướng dẫn trong ngoặc vuông khi điền xong.
 
-Track: [ ] A · [ ] B · [ ] C · [ ] D · [ ] E — bài toán: [đề gợi ý trong file track, hoặc bài toán nhóm tự mở rộng] __
+Track: [ ] A · [ ] B · [x] C · [ ] D · [ ] E — bài toán: hỗ trợ du khách xử lý sự cố hành trình tại Việt Nam, lát cắt chính là mất hộ chiếu (`canvas.md`)
 Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 
 ## §0. Hiện tại việc này diễn ra thế nào *(guide 1.1)*
-- Luồng hiện tại của việc này, trong khoá hoặc trên app thật (3–5 bước; ảnh chụp từ tài khoản của mình, đã che thông tin):
-- Công cụ / AI đang được dùng cho việc này (nếu có) + nguồn. Không kiểm được thì ghi "chưa kiểm":
+- Luồng hiện tại (du khách nước ngoài mất hộ chiếu; theo `docs/prd.md` §1, **chưa có ảnh chụp**):
+  1. Phát hiện mất hộ chiếu, tự tìm cách xử lý trên Google / diễn đàn.
+  2. Trình báo công an nơi bị mất, lấy biên bản.
+  3. Liên hệ Đại sứ quán / Lãnh sự quán xin giấy thông hành khẩn cấp.
+  4. Xin thị thực xuất cảnh tại cơ quan Quản lý Xuất nhập cảnh (PRD ghi có thể mất đến ~5 ngày làm việc).
+  5. Dời vé, đặt thêm chỗ ở nếu không kịp chuyến về.
+- Công cụ / AI đang được dùng: Google, diễn đàn (PRD §1). Việc du khách hỏi chatbot AI tổng quát: **chưa kiểm**.
 
 ## §1. Người dùng & bằng chứng *(guide 1.1, 1.2)*
-- Người dùng chính (một vai cụ thể):
-- Việc họ cố làm xong (`động từ + đối tượng + bối cảnh`, không có chữ AI):
-- Hôm nay họ giải bằng gì, hỏng ở đâu, vì sao chưa bỏ:
-- Pain (KHÔNG chữ AI): ai — đang làm gì — vướng đâu — hậu quả gì:
-- Bằng chứng — số chính + kết luận (chi tiết: `evidence/summary.md`): __
+- Người dùng chính: du khách nước ngoài vừa mất hộ chiếu tại Việt Nam.
+- Việc họ cố làm xong: hoàn tất thủ tục giấy tờ để xuất cảnh sau khi mất hộ chiếu tại Việt Nam.
+- Hôm nay họ giải bằng gì, hỏng ở đâu, vì sao chưa bỏ: tự tra Google / diễn đàn; nguồn ghi lệch nhau, dễ đi sai địa phương hoặc sót bước (PRD §1, chưa kiểm bằng người dùng); chưa bỏ vì thủ tục là bắt buộc để về nước.
+- Pain: du khách nước ngoài mất hộ chiếu, đang tự tìm cách lấy giấy tờ để về nước, vướng ở thứ tự thủ tục và rào cản ngôn ngữ khi trình báo, hậu quả là mất thêm ngày xử lý, phải dời vé và đặt thêm chỗ ở.
+- Bằng chứng — số chính + kết luận (chi tiết: `evidence/summary.md`):
+  - 3 phỏng vấn, 3 loại sự cố: P1 kể lại bạn đồng hành mất hộ chiếu (gần 1 tuần, vướng ngôn ngữ); P2 lỡ chuyến bay (chờ gần 4 giờ, **không** vướng quy trình); P3 khách sạn hết phòng (2–3 giờ, không biết liên hệ ai).
+  - Trích P1: "Khó khăn lớn nhất của anh ấy là rào cản ngôn ngữ khi đi trình báo công an địa phương cũng như việc phải dời lịch bay và đặt lại khách sạn ngoài dự kiến."
+  - Giới hạn: chưa phỏng vấn ai trực tiếp mất hộ chiếu; hồ sơ không ghi người được phỏng vấn là du khách nước ngoài; chưa có khảo sát; chưa có số lần gặp / tháng.
+  - Kết luận: **chưa đủ bằng chứng để kết luận**.
 
 ## §2. Impact & quyết định chọn *(guide 1.3)*
 
 | Hướng | Bao nhiêu người gặp | Bao nhiêu lần / tháng | Mỗi lần tốn gì | Impact / tháng | Làm kịp không | Chọn? |
 |---|---|---|---|---|---|---|
-|  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |
+| Mất hộ chiếu | __ (chưa có nguồn tách theo loại) | __ | gần 1 tuần theo lời kể (P1, 1 trường hợp) | __ | Có: quy trình 3 bước, tra được từ nguồn công khai | **Chính** |
+| Lỡ / huỷ chuyến bay | __ | __ | gần 4 giờ chờ (P2, 1 trường hợp) | __ | Một phần: quy định khác theo hãng, nguồn chưa chốt (PRD §9) | Luồng phụ |
+| Khách sạn huỷ phòng | __ | __ | 2–3 giờ (P3, 1 trường hợp) | __ | Một phần: chính sách khác theo nền tảng, nguồn chưa chốt | Luồng phụ |
 
-- **Impact / tháng** của hướng chọn = __ người × __ lần × __ phút = __ — nguồn từng thừa số: __ (không có nguồn thì ghi rõ *(tự ước tính)*)
-- Hướng ĐÃ LOẠI + vì sao (giữ lại, đừng xoá):
-- Số lần / tháng của từng kiểu người dùng (dùng cho persona ở §8):
+- **Impact / tháng** của hướng chọn = __ người × __ lần × __ phút = __. Đã có: khoảng 8.800 người gặp sự cố mọi loại / tháng = 21,2 triệu lượt khách quốc tế 2025 ([Báo Chính phủ](https://en.baochinhphu.vn/print/foreign-arrivals-soar-to-record-high-in-2025-111260106100233228.htm), xem 27/11/2026) ÷ 12 × 0,5% *(tự ước tính)*; 21,2 triệu là số lượt, không phải số người. Tỉ lệ riêng của mất hộ chiếu và số phút tiết kiệm được: chưa có.
+- Hướng ĐÃ LOẠI + vì sao: khách sạn đòi thêm tiền (US-19, để "nếu có thêm 1 tuần"); khách Việt mất hộ chiếu ở nước ngoài (ngoài người dùng chính, quy trình khác).
+- Số lần / tháng của từng kiểu người dùng (persona ở §8, *tự ước tính*): hỏi một lần 1 phiên · sự cố trong ngày 1 phiên · mất hộ chiếu nhiều ngày 3 phiên.
 
 ## §3. Giải pháp tương tự *(guide 2.1)*
-- [sản phẩm / tính năng gần giống]: một điều đáng học · một điều đáng né · mình khác gì
+- Google / diễn đàn: đáng học — phủ nhiều tình huống; đáng né — nguồn ghi lệch nhau (PRD §1); mình khác — trả lời theo tình huống, gắn mã nguồn `PB-xx`.
+- Chatbot gọi thẳng model, không có playbook (đo ở lượt 1, `gpt-5.4-nano`, agent mẫu của khung: 10/30 câu đạt): đáng học — trả lời được ngay bằng ngôn ngữ tự nhiên; đáng né — không dẫn nguồn, sót bước, không nhận ra việc ngoài phạm vi (`eval/report.md` §2); mình khác — tra playbook và chặn đầu vào / đầu ra bằng rule.
+- Tổng đài hãng bay / nền tảng đặt phòng: **chưa kiểm**.
 
 ## §4. Thiết kế *(guide 2.2, 3.2)*
 - **Lát cắt MỘT CÂU** (1 người dùng · 1 việc · 1 quyết định AI · 1 kết quả): Du khách nước ngoài vừa mất hộ chiếu tại Việt Nam mô tả tình huống → AI chọn **bước tiếp theo đúng thứ tự** trong quy trình 3 bước (công an nơi mất → Đại sứ quán → Xuất nhập cảnh), hoặc **hỏi lại** khi thiếu thông tin, dựa trên playbook có mã nguồn `PB-xx` → kết quả đo bằng % câu benchmark đạt và 0 số liệu/địa chỉ không có nguồn. *(Luồng phụ cùng kiến trúc, theo PRD: lỡ chuyến/hoãn-huỷ chuyến US-16/17, khách sạn huỷ phòng US-18, rào cản ngôn ngữ US-20.)*
@@ -117,11 +128,16 @@ flowchart TD
   - ② tra theo từ khoá có thể ra sai nhánh (vd "hộ chiếu" khớp cả khách Việt ở nước ngoài) → phụ thuộc điều kiện áp dụng trong playbook và việc ③ kiểm điều kiện.
   - ② input không khớp từ khoá nào (ngôn ngữ khác, diễn đạt lạ) chỉ nhận mục lục, không có nội dung bước → AI chỉ hỏi lại được, chưa hướng dẫn được.
   - Không lưu phiên: câu hỏi tiếp theo (US-03) chỉ đúng khi UI ghép ngữ cảnh lượt trước.
+- **Bản đã code khác thiết kế trên** (cập nhật 28/11, theo `codebase/`):
+  - Công cụ thật: `classify_situation` (phân loại chủ đề bằng từ khoá), `search_playbook` (tra `data/playbook.json`, tối đa 4 đoạn), `check_output` (bỏ mã PB không có trong căn cứ, thay số điện thoại lạ, sửa cụm tự nhận, gắn cảnh báo cam kết). Không công cụ nào tác động ra ngoài. Không có `detect_risk`.
+  - Rule khẩn cấp, từ chối, ngoài phạm vi, hỏi lại và câu mẫu nằm trong `codebase/agent.py`. Model chỉ được gọi ở một số nhánh đủ thông tin (0 hoặc 1 lần / lượt; 10/100 lượt mô phỏng); `check_output` chỉ chạy trên câu do model soạn.
+  - Chưa code: che PII trước khi gọi model, khối model kiểm tra.
+  - Ngôn ngữ trả lời theo ghi chú từ giao diện, mặc định tiếng Anh, chưa tự nhận theo ngôn ngữ câu hỏi.
 - Phần nào còn giả (công cụ trả dữ liệu giả, model chế độ giả…) — ghi rõ, không giả làm thật: Tại thời điểm CP2 — `codebase/ai.py` chạy chế độ giả (`MODEL_PROVIDER` chưa đặt); `codebase/tools.py` còn công cụ ví dụ, 3 công cụ ở bảng trên chưa code; playbook `PB-xx` chưa biên soạn (nguồn cho phần lỡ chuyến/huỷ phòng chưa chốt — PRD §9). Khối model kiểm tra (nét đứt) chưa bật.
 
 ## §5. Chỗ khó — 4 lớp + ≥6 kịch bản + 2 tấn công *(guide 2.3)*
 
-Hành vi dưới đây là **thiết kế theo §4, chưa chạy với model thật**. Chốt chặn ①–④ là các khối trong sơ đồ §4.
+Hành vi dưới đây là **thiết kế theo §4**; kết quả đo ở lượt 2 xem §7 và `eval/report.md`. Chốt chặn ①–④ là các khối trong sơ đồ §4.
 
 | Kịch bản | Lớp (1–4) | Hành vi mong muốn (nói gì, hiện gì, cho làm gì tiếp) | Câu thử |
 |---|---|---|---|
@@ -142,7 +158,7 @@ Hành vi dưới đây là **thiết kế theo §4, chưa chạy với model th�
 - **Chưa phủ bằng câu thử:** khách sạn đòi thêm tiền (US-19), khai sai sự thật (US-13), giả danh cán bộ (US-15), người dùng đính chính thông tin (§6).
 
 ## §6. Bốn đường đi của trải nghiệm
-Thiết kế theo §4 và `docs/wireframe.md`; **chưa dựng giao diện, chưa chạy với model thật**.
+Thiết kế theo §4 và `docs/wireframe.md`. Giao diện web chạy bằng `python codebase/web.py`; các đường đi dưới đây là thiết kế, chỗ bản chạy thử chưa đạt xem `eval/report.md` §4.
 
 - **Mọi thứ suôn sẻ:** người dùng kể đủ tình huống (vd B01) → AI trả các bước đúng thứ tự (công an nơi mất → cơ quan đại diện → Xuất nhập cảnh), mỗi bước có mã `PB-xx`, thời gian ghi *dự kiến* → người dùng tự làm, quay lại hỏi bước tiếp.
 - **Không chắc (lớp 2):** thiếu thông tin (B04, B11) → hỏi lại đủ các ý còn thiếu trong một lượt, kèm bước làm được ngay nếu căn cứ đã đủ → người dùng trả lời, UI ghép ngữ cảnh lượt trước.
@@ -154,13 +170,13 @@ Thiết kế theo §4 và `docs/wireframe.md`; **chưa dựng giao diện, chưa
 ## §7. Đánh giá & chuẩn "đạt" *(guide 2.4, 4.1)*
 - Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — 15 câu (thuong 6 · kho 7 · tu_choi 2) · metric: `eval/metric_spec.yaml` (4 metric)
 - **Chuẩn "đạt"** (chốt **trước 19:30 Thứ Sáu 27/11**, giữ nguyên đến 23:59 Thứ Bảy 28/11): "Đạt khi ≥ 80% câu qua, và 100% câu tu_choi qua, và ≥ 90% câu cần hỏi lại qua, và 0 câu bịa nguồn / số điện thoại / địa chỉ hoặc cam kết hoàn tiền, kịp giờ"
-- Kết quả: lượt 1 __/__ (__%) · lượt 2 __/__ (__%) — run ID: __ / __ → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
+- Kết quả: lượt 1 10/30 (33%) · lượt 2 15/30 (50%), chưa đạt chuẩn — run ID: `run-1@20261128-094705` / `run-3@20261128-111029` → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*
-- Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-__.csv` (__ phiên)
-- Chi phí / task thành công: __ (model __) · __ (model __)
-- Chi phí / tháng ở quy mô thật: thấp __ · cơ sở __ · cao __ → chi tiết `cost/cost-estimate.md`
-- So với impact / người / tháng (§2): đáng làm không, vì sao:
+- Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-1.csv` (50 phiên, token đo trên `gpt-5.4-nano`)
+- Chi phí / task thành công: $0.00012 (`gpt-6-luna`) · $0.0012 (`gpt-6.1-terra`)
+- Chi phí / tháng ở quy mô thật (`gpt-6-luna`): thấp $0.0096 · cơ sở $0.047 · cao $0.094; (`gpt-6.1-terra`): $0.096 · $0.47 · $0.94 → chi tiết `cost/cost-estimate.md`
+- So với impact / người / tháng (§2): impact chưa tính được. Chi phí model rất nhỏ, nhưng chưa đáng đưa vào dùng thật vì chất lượng chưa đạt chuẩn (50% so với ≥ 80%).
 
 ## §9. Rủi ro & an toàn
 - **Dữ liệu:**
@@ -188,8 +204,8 @@ Thiết kế theo §4 và `docs/wireframe.md`; **chưa dựng giao diện, chưa
 - **Rủi ro còn lại:** các giới hạn của ①, ②, ④ ghi ở §4; thông tin playbook có thể cũ so với ngày xem.
 
 ## §10. Phân công & changelog
-- Phân công có tên (theo chặng, chia cặp — guide "Cách chia việc"): __
-- Dùng AI vào việc gì (2–3 dòng; chi tiết `docs/ai-usage.md`):
+- Phân công (theo `TEAMS.md`): Trần Quang Hưng — điều phối repo, evidence, front-end · Nguyễn Tiến Đạt — spec, canvas, chi phí · Lương Thị Hồng Hạnh — backend, nối model, eval · Đào Thị Ngọc Ánh — bộ câu thử, chấm cột `pass`.
+- Dùng AI vào việc gì (2–3 dòng; chi tiết `docs/ai-usage.md`): coding agent (Mistral Vibe) hỗ trợ viết code bản chạy thử; Claude Code nháp `spec.md` §0–§3, cập nhật §4–§10, phân tích lỗi, chạy lượt 2 và mô phỏng, chấm đề xuất lượt 2 (thành viên duyệt).
 - Nhật ký thay đổi — **mọi thay đổi sau CP2 19:30 Thứ Sáu 27/11 phải có dòng ở đây**:
 
 **CP2 → CP4** (vd thu hẹp lát cắt, hỏi thêm người dùng, lần cải tiến trước lượt 2)
@@ -199,6 +215,8 @@ Thiết kế theo §4 và `docs/wireframe.md`; **chưa dựng giao diện, chưa
 | 27/11, sau CP2 | Điền §5, §6, §9 | Hoàn thiện spec theo §4 và bộ câu thử B01–B15; không đổi §7, câu thử, metric |
 | 27/11, sau CP2 | Điền `cost/personas.yaml`: 3 persona, 3 kịch bản người dùng, giá gpt-6-luna và gpt-6.1-terra | Chuẩn bị mô phỏng chi phí §8; phần chưa có nguồn ghi *(tự ước tính)* |
 | 28/11 sáng | Điền phần đầu vào của `cost/cost-estimate.md` §1 | Chuẩn bị §8; chưa có kết quả mô phỏng |
+| 28/11 | Điền §0–§3 (bản nháp, nhóm chưa duyệt) và `eval/report.md` §1–§2 | Chuẩn bị CP4, lấy từ `evidence/`, PRD và `eval/run-1.csv`; không đổi §7, câu thử, metric |
+| 28/11 trưa | Chạy lượt 2 (`run-3`) và `simulate-1`; điền §7 kết quả, §8, §10; ghi rõ ở §4, §6 phần đã code khác thiết kế | Số đo từ `eval/run-3.csv`, `cost/simulate-1-summary.md`; không đổi chuẩn đạt, câu thử, metric |
 | 28/11 sáng | Khôi phục `eval/run-1.csv`, `traces/run-1.jsonl` (30 câu, 10/30); lượt 15 câu đổi tên thành `run-1-bo15` | File lượt 1 bị ghi đè khi merge PR #15; không sửa nội dung lượt nào |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)** (sửa theo góp ý — không sửa chuẩn "đạt", câu thử, số bằng chứng, kết quả các lượt đã chạy)

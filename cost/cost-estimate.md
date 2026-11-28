@@ -17,31 +17,35 @@
   Nguồn: tỉ lệ, số phiên, số lượt đều *(tự ước tính)*. Phỏng vấn P1–P3 và `docs/prd.md` §1 chỉ gợi ý độ dài một vụ việc.
 - **Số người dùng thật** (số người dùng trong một tháng) 3 kịch bản: thấp 90 · cơ sở 440 · cao 880. Cách tính: 21,2 triệu lượt khách quốc tế năm 2025 ([Báo Chính phủ](https://en.baochinhphu.vn/print/foreign-arrivals-soar-to-record-high-in-2025-111260106100233228.htm), xem 27/11/2026) ÷ 12 × 0,5% gặp sự cố × 1% / 5% / 10% dùng, làm tròn. Ba tỉ lệ đều *(tự ước tính)*; 21,2 triệu là số lượt, không phải số người.
 - **Giá** (USD / 1 triệu token vào · ra; giá chuẩn, ngữ cảnh ngắn; [trang giá OpenAI](https://developers.openai.com/api/docs/pricing), xem 27/11/2026): `gpt-6-luna` 0,10 · 0,50 — `gpt-6.1-terra` 1,00 · 5,00
-- **Tỉ lệ đạt** dùng để tính: __/__ (__%) — lượt `run-__` (lượt 2)
-- Đo token trên model __, tính giá model `gpt-6-luna` và `gpt-6.1-terra`
-- **Giới hạn của mô phỏng:** mỗi lượt hỏi lấy ngẫu nhiên, độc lập từ câu `thuong` và `kho` trong `eval/benchmark.csv`, không ghép ngữ cảnh lượt trước. Khi dùng thật, câu hỏi nối tiếp tốn thêm token vào.
+- **Tỉ lệ đạt** dùng để tính: 15/30 (50%) — lượt `run-3` (là lượt 2)
+- Đo token trên model `gpt-5.4-nano`, tính giá model `gpt-6-luna` và `gpt-6.1-terra`
+- **Giới hạn của mô phỏng:** mỗi lượt hỏi lấy ngẫu nhiên, độc lập từ câu `thuong` và `kho` trong `eval/benchmark.csv`, không ghép ngữ cảnh lượt trước. Khi dùng thật, câu hỏi nối tiếp tốn thêm token vào. Chỉ 10 lần gọi model trên 100 lượt hỏi mô phỏng; các lượt còn lại trả câu mẫu viết sẵn hoặc câu "không rõ tình huống" nên tốn 0 token. Luật chọn câu mẫu được viết khi đã có bộ câu thử, nên với câu lạ tỉ lệ gọi model và chi phí có thể khác.
 
 ## 2. Kết quả mô phỏng
 
-Lượt mô phỏng: `cost/simulate-__.csv` · run ID __ · __ phiên · seed __
+Lượt mô phỏng: `cost/simulate-1.csv` · run ID `simulate-1@20261128-113648` · 50 phiên · seed 42 · 0 phiên lỗi
 
-*(dán bảng từ `cost/simulate-N-summary.md`)*
+| Persona | Số phiên | Lượt hỏi / phiên | Token vào / phiên | Token ra / phiên | Gọi model / phiên | Gọi công cụ / phiên |
+|---|---:|---:|---:|---:|---:|---:|
+| hoi_mot_lan | 25 | 1 | 64 | 31 | 0.1 | 1.2 |
+| su_co_trong_ngay | 16 | 3 | 262 | 146 | 0.3 | 3.6 |
+| mat_ho_chieu_nhieu_ngay | 9 | 3 | 287 | 162 | 0.3 | 3.7 |
 
 | Model | Chi phí / phiên | Chi phí / task thành công | / tháng — thấp | / tháng — cơ sở | / tháng — cao | / người / tháng (cơ sở) |
 |---|---|---|---|---|---|---|
-| | | | | | | |
-| | | | | | | |
+| `gpt-6-luna` | $0.000062 | $0.00012 | $0.0096 | $0.0469 | $0.0937 | $0.00011 |
+| `gpt-6.1-terra` | $0.00062 | $0.0012 | $0.0958 | $0.4686 | $0.9372 | $0.0011 |
 
 Chi phí / task thành công = chi phí trung bình mỗi phiên ÷ tỉ lệ đạt — **không coi như đạt 100%**.
 
 ## 3. So với impact
 
-- Impact / người / tháng (`spec.md` §2): __
-- Chi phí / người / tháng (cơ sở, model __): __
-- **Kết luận một dòng — đáng làm không:** __
+- Impact / người / tháng (`spec.md` §2): **chưa tính được**, chưa có số phút tiết kiệm và tỉ lệ từng loại sự cố.
+- Chi phí / người / tháng (cơ sở): $0.00011 (`gpt-6-luna`) · $0.0011 (`gpt-6.1-terra`).
+- **Kết luận một dòng — đáng làm không:** chi phí model không phải rào cản, nhưng **chưa đáng đưa vào dùng thật**: tỉ lệ đạt 50% (chuẩn ≥ 80%), câu `tu_choi` đạt 2/6 (chuẩn 100%) → sửa và đo lại.
 
 ## 4. *(Muốn sâu hơn, không bắt buộc)*
 
-- Bảng độ nhạy: model rẻ hơn · cache · cắt ngữ cảnh · giới hạn bước — mỗi cần gạt đổi chi phí bao nhiêu
-- Chi phí ngoài model: hosting, lưu trữ, giờ công người duyệt
-- Quy mô nào thì bài toán còn đáng làm
+- Độ nhạy theo model: `gpt-6.1-terra` đắt gấp 10 lần `gpt-6-luna` (theo giá vào và ra).
+- Độ nhạy theo tỉ lệ gọi model *(tự ước tính, ngoại suy tuyến tính)*: nếu mọi lượt đều gọi model (gấp 10 lần số lần gọi đo được), chi phí cơ sở khoảng $0.47 / tháng (`gpt-6-luna`) và $4.7 / tháng (`gpt-6.1-terra`).
+- Chi phí ngoài model (hosting, lưu trữ, giờ công cập nhật playbook): chưa tính.
