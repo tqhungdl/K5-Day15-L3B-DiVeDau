@@ -40,7 +40,7 @@ const I18N = {
     errorPrefix: "Sorry, something went wrong: ",
     micTitle: "Speak instead of typing",
     micOff: "⏹ Mic off",
-    listening: "🎙️ Listening… pause 5s to auto-send",
+    listening: "🎙️ Listening… pause 3s to auto-send",
     micUnsupported: "Voice input isn't supported in this browser — please type instead.",
     voiceTitle: "Agent speaks its replies aloud",
     speaking: "🔊 Speaking… tap to stop",
@@ -83,7 +83,7 @@ const I18N = {
     errorPrefix: "Xin lỗi, có lỗi xảy ra: ",
     micTitle: "Nói thay vì gõ",
     micOff: "⏹ Tắt mic",
-    listening: "🎙️ Đang nghe… dừng 5 giây sẽ tự gửi",
+    listening: "🎙️ Đang nghe… dừng 3 giây sẽ tự gửi",
     micUnsupported: "Trình duyệt này chưa hỗ trợ nhập bằng giọng nói — bạn gõ giúp nhé.",
     voiceTitle: "Agent trả lời bằng giọng nói",
     speaking: "🔊 Đang nói… bấm để dừng",
@@ -277,10 +277,54 @@ function scrollDown() {
 }
 
 /* ---- Gửi / nhận ---- */
+/* Ngữ cảnh lượt trước — chỉ giữ trong trình duyệt, server không lưu phiên (spec §4).
+   Mỗi lượt gửi ghép các tin nhắn người dùng trước đó vào input để luật hỏi lại
+   và model đọc được facts từ lượt đầu (vd "I lost my passport" + "in Hanoi").
+   Kèm cả câu trả lời agent ([agent]) để server biết bước nào đã đưa → trả
+   TỪNG BƯỚC MỘT lượt. Server chỉ áp luật khẩn cấp/từ chối lên lượt hiện tại
+   (phân tách bằng hai dòng đánh dấu, agent.py `_split_turns`). */
+const PREV_MARK = "--- lượt trước (bối cảnh) ---";
+const CURRENT_MARK = "--- lượt này ---";
+let prevTurns = [];   // {u: tin người dùng, a: câu trả lời agent}
+
+/* Chống vọng: ở voice mode agent tự đọc câu trả lời rồi mở mic — mic có thể thu lại
+   tiếng của chính agent từ loa và tự gửi như thể người dùng nói (lỗi thực tế khi demo).
+   Nhớ câu vừa đọc; nội dung mic thu được mà nằm trong câu đó (≥4 từ) thì bỏ, mở lại mic. */
+let lastSpoken = "";
+
+function normText(s) {
+  return s.toLowerCase().replace(/[^\p{L}\p{N} ]+/gu, " ").replace(/\s+/g, " ").trim();
+}
+function isAgentEcho(text) {
+  const t = normText(text), a = normText(lastSpoken);
+  if (!t || !a || t.split(" ").length < 4) return false;
+  return a.includes(t) || t.includes(a);
+}
+
+function buildInput(text) {
+  const parts = [];
+  if (prevTurns.length) {
+    parts.push(PREV_MARK);
+    // Giữ MỌI tin người dùng (facts như thành phố, quốc tịch phải sống sót qua cả phiên —
+    // mất là agent hỏi lại từ đầu); câu agent chỉ cần dòng đầu (đánh dấu STEP đã đưa).
+    for (const t of prevTurns) {
+      parts.push("[người dùng] " + t.u);
+      if (t.a1) parts.push("[agent] " + t.a1);
+    }
+  }
+  parts.push(CURRENT_MARK, text);
+  return parts.join("\n");
+}
+
 async function send() {
   const input = $("input");
   const text = input.value.trim();
   if (!text) return;
+  if (isAgentEcho(text)) {          // tiếng của agent bị mic thu lại → bỏ, mở lại mic
+    input.value = "";
+    if (mode === "voice") autoListen();
+    return;
+  }
   input.value = "";
   $("send").disabled = true;
   clearTimeout(autoSendTimer);
@@ -292,16 +336,22 @@ async function send() {
   addUser(text);
   addTyping();
 
+  const payload = buildInput(text) + "\n" + I18N[lang].langNote;
+  const turn = { u: text, a1: "" };
+  prevTurns.push(turn);
+
   try {
     const res = await fetch("/api/answer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: text + "\n" + I18N[lang].langNote }),
+      body: JSON.stringify({ text: payload }),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       addError(data.error || "HTTP " + res.status);
     } else {
+      turn.a1 = (data.output || "").split("\n")[0].slice(0, 200);
+      lastSpoken = data.output || "";   // để nhận tiếng vọng ở lượt nghe kế tiếp
       $("typing").remove();
       addAgent(data.output || "");
       if (EMERGENCY_RE.test(String(data.output))) addEmergency();
@@ -437,18 +487,19 @@ function setMicEnabled(on) {
 function autoListen() {
   if (mode !== "voice" || !micEnabled) return;
   // Chrome cần nhả loa/mic sau khi tổng hợp giọng nói xong — mở mic ngay
-  // lập tức có thể bị bỏ qua im lặng (đặc biệt giọng tiếng Anh) → trễ ngắn
-  setTimeout(() => { if (mode === "voice" && micEnabled) startListening(); }, 400);
+  // lập tức có thể bị bỏ qua im lặng (đặc biệt giọng tiếng Anh) hoặc thu tiếng
+  // vọng của chính agent → trễ đủ dài (lớp chặn 2 là isAgentEcho)
+  setTimeout(() => { if (mode === "voice" && micEnabled) startListening(); }, 700);
 }
 
-/* Voice mode: ngừng nói 5 giây → tự gửi, không cần bấm nút */
+/* Voice mode: ngừng nói 3 giây → tự gửi, không cần bấm nút */
 function armAutoSend() {
   clearTimeout(autoSendTimer);
   if (mode !== "voice") return;
   autoSendTimer = setTimeout(() => {
     autoSendTimer = null;
     if (mode === "voice" && !$("send").disabled && $("input").value.trim()) send();
-  }, 5000);
+  }, 3000);
 }
 
 function initMic() {
