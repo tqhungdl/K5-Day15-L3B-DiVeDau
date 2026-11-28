@@ -113,6 +113,33 @@ def call_provider(system, user):
     raise RuntimeError("Chưa hỗ trợ MODEL_PROVIDER=%s — chép ví dụ quickstart vào call_provider()" % MODEL_PROVIDER)
 
 
+URL_OPENAI = "https://api.openai.com/v1/chat/completions"
+
+
+def post_json(url, headers, body, timeout=90):
+    """Gửi POST JSON, trả về JSON phản hồi. Chỉ dùng thư viện chuẩn (urllib)."""
+    req = urllib.request.Request(
+        url, data=json.dumps(body).encode("utf-8"), method="POST",
+        headers=dict({"Content-Type": "application/json"}, **headers))
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        raise RuntimeError("HTTP %d: %s" % (e.code, e.read().decode("utf-8", "replace")[:300]))
+
+
+def call_openai(system, user):
+    """Gọi OpenAI Chat Completions một lần. Token lấy từ trường usage của API."""
+    if not API_KEY:
+        raise RuntimeError("Chưa có API_KEY trong file .env")
+    messages = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": user}]
+    data = post_json(URL_OPENAI, {"Authorization": "Bearer " + API_KEY},
+                     {"model": MODEL_NAME, "messages": messages})
+    u = data["usage"]
+    return {"text": data["choices"][0]["message"]["content"] or "",
+            "tokens_in": u["prompt_tokens"], "tokens_out": u["completion_tokens"]}
+
+
 @model_call
 def call_model(system: str, user: str) -> dict:
     if MODEL_PROVIDER == "fake":

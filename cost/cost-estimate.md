@@ -6,11 +6,20 @@
 
 ## 1. Đầu vào
 
-- **Persona** (`cost/personas.yaml`): ≥3 kiểu — tỉ lệ, số phiên / người / tháng, số lượt hỏi / phiên. Nguồn: __
-- **Số người dùng thật** 3 kịch bản: thấp __ · cơ sở __ · cao __. Nguồn: __
-- **Giá** ≥2 mức model (từ `further-reading/model-prices.md` của repo đề, có link + ngày xem): __ · __
+- **Persona** (`cost/personas.yaml`):
+
+  | Persona | Tỉ lệ | Phiên / người / tháng | Lượt hỏi / phiên |
+  |---|---|---|---|
+  | `hoi_mot_lan` — hỏi một việc rồi tự làm | 50% | 1 | 1 |
+  | `su_co_trong_ngay` — lỡ chuyến, mất phòng | 30% | 1 | 3 |
+  | `mat_ho_chieu_nhieu_ngay` — quay lại hỏi theo từng bước | 20% | 3 | 3 |
+
+  Nguồn: tỉ lệ, số phiên, số lượt đều *(tự ước tính)*. Phỏng vấn P1–P3 và `docs/prd.md` §1 chỉ gợi ý độ dài một vụ việc.
+- **Số người dùng thật** (số người dùng trong một tháng) 3 kịch bản: thấp 90 · cơ sở 440 · cao 880. Cách tính: 21,2 triệu lượt khách quốc tế năm 2025 ([Báo Chính phủ](https://en.baochinhphu.vn/print/foreign-arrivals-soar-to-record-high-in-2025-111260106100233228.htm), xem 27/11/2026) ÷ 12 × 0,5% gặp sự cố × 1% / 5% / 10% dùng, làm tròn. Ba tỉ lệ đều *(tự ước tính)*; 21,2 triệu là số lượt, không phải số người.
+- **Giá** (USD / 1 triệu token vào · ra; giá chuẩn, ngữ cảnh ngắn; [trang giá OpenAI](https://developers.openai.com/api/docs/pricing), xem 27/11/2026): `gpt-6-luna` 0,10 · 0,50 — `gpt-6.1-terra` 1,00 · 5,00
 - **Tỉ lệ đạt** dùng để tính: __/__ (__%) — lượt `run-__` (lượt 2)
-- Đo token trên model __, tính giá model __ và __
+- Đo token trên model __, tính giá model `gpt-6-luna` và `gpt-6.1-terra`
+- **Giới hạn của mô phỏng:** mỗi lượt hỏi lấy ngẫu nhiên, độc lập từ câu `thuong` và `kho` trong `eval/benchmark.csv`, không ghép ngữ cảnh lượt trước. Khi dùng thật, câu hỏi nối tiếp tốn thêm token vào.
 
 ## 2. Kết quả mô phỏng
 
