@@ -6,7 +6,7 @@ README của nhóm có mục "Dùng AI vào việc gì" (2–3 dòng, bắt bu�
 
 | Việc | Công cụ AI | AI làm gì | Người kiểm/sửa gì | Ai phụ trách |
 |---|---|---|---|---|
-| Code bản chạy thử | | | | |
+| Code bản chạy thử | Coding agent (Mistral Vibe) | Viết khung luồng chính trong `codebase/agent.py`, `codebase/tools.py`, `codebase/web.py`; nối model thật vào `codebase/ai.py` (Gemini REST, rồi OpenAI `gpt-4o-mini`); gợi ý phân loại tình huống nặng / nhẹ bằng rule | Đọc lại từng hàm và docstring; chạy `python run.py`, `run.py eval --try` trước khi nhận; chạy eval lượt 1 (5/15 đạt) → sửa luật quyết định → lượt 2 đạt 15/15 (`eval/run-2.csv`) | Lương Thị Hồng Hạnh |
 | Prompt / thiết kế lời gọi mô hình | | | | |
 | Đào data (viết script đếm, gợi ý nhãn) | | | Kiểm tay __ dòng, khớp __ | |
 | Rà câu hỏi phỏng vấn / khảo sát | | Chỉ rà câu dẫn dắt | | |
