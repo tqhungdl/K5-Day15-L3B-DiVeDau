@@ -46,14 +46,17 @@
 | Lượt | Run ID | Model | Cấu hình (prompt / công cụ / thay đổi) | Đạt / tổng | % | Đạt chuẩn? |
 |---|---|---|---|---|---|---|
 | 1 | run-1@20261128-094705 | gpt-5.4-nano | `agent.py` mẫu của khung (chưa có playbook PB-xx), 1 lần gọi model + 1 công cụ mỗi câu | 10/30 | 33% | Chưa (chuẩn: ≥ 80%) |
-| 2 | | | | __/__ | | |
+| 2 | run-3@20261128-111029 | gpt-5.4-nano | Workflow rule + playbook 8 đoạn + 3 công cụ; chỉ một phần câu gọi model (trung bình 0,1 lần / câu) | 15/30 | 50% | Chưa |
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.
 
 Ghi chú 28/11:
+- Lượt 2 mang tên `run-3` vì khung đánh số theo file đã có. Cột `pass`: Claude Code chấm đề xuất, một thành viên duyệt.
 - Khi merge PR #15, `eval/run-1.csv` và `traces/run-1.jsonl` bị thay bằng một lượt khác chạy trên bộ 15 câu (`run-1@20261128-091110`, gpt-4o-mini, 5/15). Đã khôi phục lượt 1 ở bảng trên từ commit `220ad4e`; lượt 15 câu giữ ở `eval/run-1-bo15.csv`, `traces/run-1-bo15.jsonl`.
 - `eval/run-2.csv` (`run-2@20261128-092056`, 15/15) cũng chạy trên bộ 15 câu, 12/15 câu không gọi model, nên không dùng để so với lượt 1.
 
 ## 6. Lỗi chính
 
-Tóm 2–3 dòng từ `eval/report.md`: nhóm lỗi lớn nhất · đã sửa gì · còn lại gì.
+- Lượt 1: lỗi trải trên 6 nhóm (20 câu trượt); agent mẫu không có playbook nên thiếu căn cứ và sót bước.
+- Đã sửa: thay bằng workflow rule + playbook + chặn đầu ra. Nhóm quy trình và rủi ro cao 0/6 → 4/6; tổng 10/30 → 15/30.
+- Còn lại: nhóm từ chối / an toàn 0/4, 7 câu không nhận ra tình huống, câu `tu_choi` giảm 3/6 → 2/6, trả sai ngôn ngữ. Chi tiết `eval/report.md`.
