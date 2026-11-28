@@ -45,7 +45,7 @@
 
 | Lượt | Run ID | Model | Cấu hình (prompt / công cụ / thay đổi) | Đạt / tổng | % | Đạt chuẩn? |
 |---|---|---|---|---|---|---|
-| 1 | | | | __/__ | | |
+| 1 | run-1@20261128-094705 | gpt-5.4-nano | `agent.py` mẫu của khung (chưa có playbook PB-xx), 1 lần gọi model + 1 công cụ mỗi câu | 10/30 | 33% | Chưa (chuẩn: ≥ 80%) |
 | 2 | | | | __/__ | | |
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.
