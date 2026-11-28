@@ -45,27 +45,26 @@ Mục tiêu MVP: chat AI cho **các tình huống sự cố du lịch ở Việt
 
 ## 4. Luồng chính (happy path)
 
-1. Người dùng chọn ngôn ngữ trả lời trên giao diện (mặc định tiếng Anh).
-2. Du khách nhắn tình huống vào chat (vd: "I lost my passport in Hanoi").
-3. AI xác định tình huống thuộc tính năng 1 (mất hộ chiếu tại VN).
-4. Nếu thiếu thông tin cần thiết (đang ở đâu, mất ở đâu, quốc tịch, ngày bay…) → AI **hỏi lại**, không đoán (US-05).
-5. AI trả về các bước đúng thứ tự: công an nơi bị mất → Đại sứ quán → Xuất nhập cảnh, mỗi bước ghi nơi cần đến, giấy tờ cần mang, thời gian **dự kiến**, kèm mã nguồn `PB-xx`.
-6. AI kèm cảnh báo phù hợp tình huống (thị thực xuất cảnh mất vài ngày làm việc → nên báo hãng bay/dời vé; xin bản sao biên bản trình báo).
-7. AI gợi ý câu tiếng Việt/ngắn gọn du khách có thể đưa công an đọc (US-21) nếu hữu ích.
-8. Người dùng tự đi làm các bước; nếu hỏi tiếp ("đã có biên bản, bước tiếp theo?"), AI chỉ tiếp từ bước hiện tại, không yêu cầu làm lại bước đã xong (US-03).
+1. Du khách nhắn tình huống vào chat (vd: "I lost my passport in Hanoi") bằng tiếng Anh hoặc tiếng Việt. AI trả lời theo **ngôn ngữ của câu hỏi** (theo spec §4).
+2. AI xác định tình huống thuộc tính năng 1 (mất hộ chiếu tại VN).
+3. Nếu thiếu thông tin cần thiết (đang ở đâu, mất ở đâu, quốc tịch, ngày bay…) → AI **hỏi lại**, không đoán (US-05).
+4. AI trả về các bước đúng thứ tự: công an nơi bị mất → Đại sứ quán → Xuất nhập cảnh, mỗi bước ghi nơi cần đến, giấy tờ cần mang, thời gian **dự kiến**, kèm mã nguồn `PB-xx`.
+5. AI kèm cảnh báo phù hợp tình huống (thị thực xuất cảnh mất vài ngày làm việc → nên báo hãng bay/dời vé; xin bản sao biên bản trình báo).
+6. AI gợi ý câu tiếng Việt/ngắn gọn du khách có thể đưa công an đọc (US-21) nếu hữu ích.
+7. Người dùng tự đi làm các bước; nếu hỏi tiếp ("đã có biên bản, bước tiếp theo?"), AI chỉ tiếp từ bước hiện tại, không yêu cầu làm lại bước đã xong (US-03).
 
 Luồng phụ — lỡ chuyến bay / chuyến bị hoãn-huỷ (US-16, US-17):
 
-9. Du khách nhắn tình huống; AI hỏi lại: hãng bay nào, lỡ do lỗi mình hay do chuyến trước trễ, vé chung một mã đặt chỗ hay vé rời.
-10. AI gợi ý theo nguyên nhân: ra quầy hãng đổi chuyến; nếu lỗi do hãng thì kiểm tra quyền lợi; nhắc giữ bằng chứng (thông báo hoãn, thẻ lên máy bay). Không khẳng định được bồi thường khi chưa biết nguyên nhân.
+8. Du khách nhắn tình huống; AI hỏi lại: hãng bay nào, lỡ do lỗi mình hay do chuyến trước trễ, vé chung một mã đặt chỗ hay vé rời.
+9. AI gợi ý theo nguyên nhân: ra quầy hãng đổi chuyến; nếu lỗi do hãng thì kiểm tra quyền lợi; nhắc giữ bằng chứng (thông báo hoãn, thẻ lên máy bay). Không khẳng định được bồi thường khi chưa biết nguyên nhân.
 
 Luồng phụ — khách sạn huỷ phòng (US-18):
 
-11. AI hướng dẫn yêu cầu khách sạn / nền tảng đặt phòng đổi phòng tương đương hoặc hoàn tiền, nhắc chụp bằng chứng (email xác nhận, tin nhắn huỷ); hỏi khu vực và ngân sách trước khi gợi ý chỗ ở khác.
+10. AI hướng dẫn yêu cầu khách sạn / nền tảng đặt phòng đổi phòng tương đương hoặc hoàn tiền, nhắc chụp bằng chứng (email xác nhận, tin nhắn huỷ); hỏi khu vực và ngân sách trước khi gợi ý chỗ ở khác.
 
 Luồng phụ — rào cản ngôn ngữ (US-20):
 
-12. Du khách xin câu nói khẩn cấp; nếu chưa rõ đang ở đâu thì hỏi lại; trả về câu ngắn bằng tiếng địa phương kèm nghĩa tiếng Anh / tiếng Việt, đủ ngắn để đưa cho công an, nhân viên hay tài xế đọc.
+11. Du khách xin câu nói khẩn cấp; nếu chưa rõ đang ở đâu thì hỏi lại; trả về câu ngắn bằng tiếng địa phương kèm nghĩa tiếng Anh / tiếng Việt, đủ ngắn để đưa cho công an, nhân viên hay tài xế đọc.
 
 ## 5. Human-in-the-loop
 
@@ -104,4 +103,4 @@ MVP này là **chất vấn-hướng dẫn thuần túy**: agent không có côn
 - **Con số thời gian/lệ phí trong playbook** mỗi nguồn ghi hơi khác nhau: lấy nguồn chính thức mới nhất, ghi ngày xem, luôn nói "dự kiến". *Dự định chốt: khi biên soạn playbook, trước CP3.*
 - **Nguồn sự thật cho phần lỡ chuyến bay và huỷ phòng** (quyền lợi hành khách theo hãng, chính sách nền tảng đặt phòng — mỗi hãng/nền tảng quy định khác nhau): chưa có nguồn; nhóm cần chọn nguồn chính thức (điều kiện vé, quy định của hãng phổ biến) hoặc trả lời chung kèm hướng dẫn hỏi thẳng hãng/nền tảng. *Dự định chốt: khi biên soạn playbook.*
 
-*Đã chốt (giữ lại để theo dõi quyết định): chuẩn "đạt" — ≥80% pass, 100% `tu_choi` từ chối đúng, 0 câu bịa nguồn, ≥90% câu thiếu thông tin phải hỏi lại (xem brief + `spec.md` §7); quốc tịch playbook mẫu — Úc, Anh, Singapore; ngôn ngữ trả lời — người dùng chọn trên giao diện, mặc định tiếng Anh.*
+*Đã chốt (giữ lại để theo dõi quyết định): chuẩn "đạt" — ≥80% pass, 100% `tu_choi` từ chối đúng, 0 câu bịa nguồn, ≥90% câu thiếu thông tin phải hỏi lại (xem brief + `spec.md` §7); quốc tịch playbook mẫu — Úc, Anh, Singapore; ngôn ngữ trả lời — theo ngôn ngữ của câu hỏi (đồng bộ với spec §4, thay cho chọn ngôn ngữ trên giao diện).*

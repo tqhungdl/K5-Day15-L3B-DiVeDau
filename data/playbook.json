@@ -1,0 +1,90 @@
+{
+  "_meta": {
+    "mô_tả": "Playbook nội bộ của Travel SOS — nguồn sự thật cho agent (PRD §7). Nhóm biên soạn từ nguồn công khai; số liệu đều ghi 'dự kiến'.",
+    "quốc_tịch_mẫu": ["Australia", "United Kingdom", "Singapore"],
+    "việc_cần_làm": "Bổ sung URL + ngày xem cho từng nguồn trước CP3 (danh sách nguồn: cuối user-stories-travelsos.md); phần lỡ chuyến bay / huỷ phòng cần chọn nguồn chốt (PRD §9).",
+    "số_liệu": "Mọi con số là dự kiến — nguồn chính thức ghi hơi khác nhau; agent luôn nói 'dự kiến' và không cam kết."
+  },
+  "entries": [
+    {
+      "code": "PB-01",
+      "topic": "lost_passport",
+      "title": "Step 1 — Report the loss at the police station where it was lost",
+      "title_vi": "Bước 1 — Trình báo mất tại công an NƠI BỊ MẤT",
+      "text": "Report at the police station (công an phường/quận hoặc đồn công an tỉnh) in the city/district where the passport was LOST — not where you are staying, unless they are the same place. Bring: a copy or photo of the passport (if available), another photo ID, accommodation address, flight ticket if handy. Ask for the loss report (biên bản trình báo) and a certified copy — you need it for steps 2 and 3.",
+      "text_vi": "Trình báo tại công an phường/quận hoặc đồn công an ở tỉnh/thành NƠI BỊ MẤT hộ chiếu — không phải nơi đang lưu trú (trừ khi trùng). Mang theo: ảnh chụp hộ chiếu (nếu còn), giấy tờ tùy thân có ảnh khác, địa chỉ nơi lưu trú, vé máy bay (nếu có). Nhận biên bản trình báo và xin bản sao có xác nhận — cần cho bước 2 và 3.",
+      "keywords": ["trình báo", "công an", "đồn", "biên bản", "report", "police", "station", "step 1"],
+      "source": {"name": "Cổng thông tin Cục Quản lý Xuất nhập cảnh / Bộ Công an VN — quy trình trình báo mất giấy tờ", "url": "https://xuatnhapcanh.gov.vn", "viewed": "nhóm bổ sung ngày xem trước CP3"}
+    },
+    {
+      "code": "PB-02",
+      "topic": "lost_passport",
+      "title": "Why report promptly — administrative fine if you don't",
+      "title_vi": "Vì sao phải trình báo sớm — phạt hành chính nếu không",
+      "text": "Not reporting a lost passport to the police can lead to an administrative fine of VND 500,000–2,000,000 (dự kiến) under Decree 144/2021/NĐ-CP. The report also protects you: without it, neither the embassy nor the Immigration Department will process your documents.",
+      "text_vi": "Không trình báo mất hộ chiếu với công an có thể bị phạt hành chính 500.000–2.000.000 đồng (dự kiến) theo Nghị định 144/2021/NĐ-CP. Biên bản trình báo cũng là bắt buộc: thiếu nó, Đại sứ quán và Cục Xuất nhập cảnh sẽ không xử lý hồ sơ.",
+      "keywords": ["phạt", "nghị định", "fine", "decree", "penalty", "144"],
+      "source": {"name": "Nghị định 144/2021/NĐ-CP của Chính phủ VN — quy định xử phạt vi phạm hành chính", "url": null, "viewed": "nhóm bổ sung ngày xem trước CP3"}
+    },
+    {
+      "code": "PB-03",
+      "topic": "lost_passport",
+      "title": "Step 2 — Your embassy: emergency travel document",
+      "title_vi": "Bước 2 — Đại sứ quán: xin giấy thông hành khẩn cấp",
+      "text": "Contact your embassy or consulate in Vietnam to apply for an Emergency Travel Document (or a replacement passport). Playbook templates for 3 nationalities: Australia — Australian Embassy in Hanoi / Consulate-General in Ho Chi Minh City; United Kingdom — British Embassy in Hanoi; Singapore — Singapore Embassy in Hanoi. Always find the current address, phone number and opening hours on the mission's OFFICIAL website — do not rely on third-party listings (they are often wrong). An emergency travel document usually needs: police report copy, passport photo, proof of identity (durations vary — dự kiến).",
+      "text_vi": "Liên hệ Đại sứ quán / Lãnh sự quán của quốc gia bạn tại VN để xin Giấy thông hành khẩn cấp (hoặc hộ chiếu mới). Playbook mẫu cho 3 quốc tịch: Úc — Đại sứ quán Australia tại Hà Nội / Tổng Lãnh sự quán TP.HCM; Anh — Đại sứ quán Anh tại Hà Nội; Singapore — Đại sứ quán Singapore tại Hà Nội. Luôn tra địa chỉ, số điện thoại, giờ làm việc trên trang web CHÍNH THỨC của cơ quan đại diện — không dựa vào trang bên thứ ba (hay ghi sai). Giấy thông hành khẩn cấp thường cần: bản sao biên bản trình báo, ảnh thẻ, giấy tờ chứng minh danh tính (thời gian khác nhau — dự kiến).",
+      "keywords": ["đại sứ quán", "lãnh sự quán", "giấy thông hành", "embassy", "consulate", "emergency travel document", "step 2", "australia", "uk", "british", "singapore", "quốc tịch", "nationality"],
+      "source": {"name": "Trang chính thức của Đại sứ quán / Lãnh sự quán từng quốc gia (Úc · Anh · Singapore) tại Việt Nam", "url": null, "viewed": "nhóm bổ sung URL + ngày xem trước CP3"}
+    },
+    {
+      "code": "PB-04",
+      "topic": "lost_passport",
+      "title": "Step 3 — Exit visa at the Immigration Department",
+      "title_vi": "Bước 3 — Xin thị thực xuất cảnh tại Cục/Phòng Quản lý Xuất nhập cảnh",
+      "text": "With the emergency travel document, apply for an exit visa (thị thực xuất cảnh) at the Immigration Department (Cục Quản lý Xuất nhập cảnh, or Phòng QLXNC in provinces). This step can take up to ~5 working days (dự kiến — có thể thay đổi), so rebook flights accordingly. Bring: certified copy of the police report, the emergency travel document, passport photos, and the entry visa/stamp record if available.",
+      "text_vi": "Với giấy thông hành khẩn cấp, xin thị thực xuất cảnh tại Cục Quản lý Xuất nhập cảnh (hoặc Phòng QLXNC cấp tỉnh). Bước này có thể mất đến ~5 ngày làm việc (dự kiến — có thể thay đổi), nên tính lại chuyến bay theo. Mang theo: bản sao biên bản trình báo có xác nhận, giấy thông hành, ảnh thẻ, và thị thực/dấu nhập cảnh cũ (nếu có).",
+      "keywords": ["xuất nhập cảnh", "thị thực xuất cảnh", "exit visa", "immigration", "step 3", "5 ngày", "5 days", "cục xnc"],
+      "source": {"name": "Cổng thông tin Cục Quản lý Xuất nhập cảnh VN — thủ tục thị thực xuất cảnh", "url": "https://xuatnhapcanh.gov.vn", "viewed": "nhóm bổ sung ngày xem trước CP3"}
+    },
+    {
+      "code": "PB-05",
+      "topic": "missed_flight",
+      "title": "Missed flight — what to do, by cause",
+      "title_vi": "Lỡ chuyến bay — các bước theo nguyên nhân",
+      "text": "Go to the airline's counter or call its hotline FIRST — rebooking is usually cheaper at the airport right after the miss. If you missed it because an EARLIER flight (same booking) was delayed, you generally have the right to be rebooked free of charge and may be entitled to assistance — keep the delay notices and boarding passes as evidence. If you missed it for your own reasons (late arrival, wrong terminal), you usually pay the change fee/re-fare yourself — ask the airline for the cheapest rebooking option. Whether you get compensation depends on the airline's rules and the cause — do not assume; ask the airline directly. (Nguồn chung — mỗi hãng quy định khác nhau, cần nguồn chốt: PRD §9.)",
+      "text_vi": "Đến quầy của hãng hoặc gọi hotline TRƯỚC TIÊN — đổi chuyến ngay ở sân bay thường rẻ hơn. Nếu lỡ vì chuyến bay TRƯỚC ĐÓ (cùng một mã đặt chỗ) bị trễ: bạn thường được đổi chuyến miễn phí và có thể được hỗ trợ — giữ thông báo trễ và thẻ lên máy bay làm bằng chứng. Nếu lỡ do lỗi của mình (đến trễ, nhầm nhà ga): thường bạn tự trả phí đổi/giá vé mới — hỏi hãng phương án đổi rẻ nhất. Có được bồi thường hay không phụ thuộc quy định từng hãng và nguyên nhân — không tự kết luận; hỏi thẳng hãng. (Nguồn chung — cần nguồn chốt: PRD §9.)",
+      "keywords": ["lỡ chuyến", "missed", "trễ chuyến", "đổi chuyến", "rebook", "quầy", "counter"],
+      "source": {"name": "Quy tắc vận chuyển của từng hãng bay — CHƯA chọn nguồn chốt (PRD §9); trả lời chung kèm hướng dẫn hỏi thẳng hãng", "url": null, "viewed": "chưa có"}
+    },
+    {
+      "code": "PB-06",
+      "topic": "flight_disrupted",
+      "title": "Flight delayed or cancelled — keep evidence, know your options",
+      "title_vi": "Chuyến bị hoãn/huỷ — giữ bằng chứng, biết các phương án",
+      "text": "Keep every notice: delay/cancellation SMS or email, screenshots of the airport board, boarding pass. Ask the airline counter for: rebooking on the next available flight (free if the airline caused the change), meals/accommodation during long waits (depends on airline rules — ask, don't assume). If cancelled, you can usually choose a refund OR a new flight. Compensation may apply when the airline is at fault — it depends on the airline and the cause; ask the airline directly. (Nguồn chung — cần nguồn chốt: PRD §9.)",
+      "text_vi": "Giữ mọi bằng chứng: SMS/email báo hoãn/huỷ, ảnh bảng chuyến bay ở sân bay, thẻ lên máy bay. Đến quầy hãng xin: đổi sang chuyến gần nhất (miễn phí nếu hãng gây ra thay đổi), bữa ăn/chỗ nghỉ khi trễ dài (tuỳ quy định hãng — hỏi, không tự kết luận). Nếu bị huỷ, bạn thường được chọn hoàn tiền HOẶC chuyến mới. Bồi thường có thể áp dụng khi lỗi do hãng — tuỳ hãng, tuỳ nguyên nhân; hỏi thẳng hãng. (Nguồn chung — cần nguồn chốt: PRD §9.)",
+      "keywords": ["hoãn", "huỷ", "delayed", "cancelled", "cancellation", "overbook", "byrne", "bằng chứng", "evidence"],
+      "source": {"name": "Quy tắc vận chuyển của từng hãng bay — CHƯA chọn nguồn chốt (PRD §9); trả lời chung kèm hướng dẫn hỏi thẳng hãng", "url": null, "viewed": "chưa có"}
+    },
+    {
+      "code": "PB-07",
+      "topic": "hotel_cancelled",
+      "title": "Hotel cancelled your room — get a room or your money back",
+      "title_vi": "Khách sạn huỷ phòng — đòi đổi phòng hoặc hoàn tiền",
+      "text": "Ask the hotel FIRST for an equivalent room (same price and standard) or a full refund — in writing (email/chat) so you keep evidence. Screenshot the booking confirmation and the cancellation message. If booked via a platform (Booking, Agoda…), open their support chat in parallel — platforms usually enforce the 'confirmed booking' guarantee; ask for a comparable replacement room or refund. (Platform rules differ — check the platform's own terms; nguồn cần chốt: PRD §9.)",
+      "text_vi": "Hỏi khách sạn TRƯỚC: xin phòng tương đương (cùng giá, cùng chuẩn) hoặc hoàn tiền toàn bộ — qua email/tin nhắn để giữ bằng chứng. Chụp màn hình thư xác nhận đặt phòng và tin nhắn báo huỷ. Nếu đặt qua nền tảng (Booking, Agoda…), mở mục hỗ trợ của nền tảng song song — các nền tảng thường bảo đảm 'đã xác nhận đặt phòng'; yêu cầu phòng thay thế tương đương hoặc hoàn tiền. (Mỗi nền tảng quy định khác nhau — xem điều khoản của chính nền tảng; nguồn cần chốt: PRD §9.)",
+      "keywords": ["khách sạn", "huỷ phòng", "hotel", "cancelled my room", "overbook", "hoàn tiền", "refund", "booking", "agoda"],
+      "source": {"name": "Điều khoản dịch vụ của các nền tảng đặt phòng — CHƯA chọn nguồn chốt (PRD §9)", "url": null, "viewed": "chưa có"}
+    },
+    {
+      "code": "PB-08",
+      "topic": "emergency_phrases",
+      "title": "Emergency & reporting phrases in Vietnamese (with meanings)",
+      "title_vi": "Câu khẩn cấp & câu trình báo tiếng Việt (kèm nghĩa)",
+      "text": "For police: \"Tôi bị mất hộ chiếu. Tôi cần làm thủ tục trình báo mất tài sản.\" (I lost my passport. I need to report a loss.) — \"Bạn có thể giúp tôi không?\" (Can you help me?). For a taxi/directions: \"Xin chỉ đường đến đồn công an gần nhất.\" (Please show me the way to the nearest police station.) — \"Xin gọi giúp tôi cảnh sát.\" (Please call the police for me.) For medical: \"Xin gọi xe cấp cứu.\" (Please call an ambulance.) — \"Tôi cần bác sĩ.\" (I need a doctor.) Keep them short so a officer/driver can read them quickly.",
+      "text_vi": "Với công an: \"Tôi bị mất hộ chiếu. Tôi cần làm thủ tục trình báo mất tài sản.\" — \"Bạn có thể giúp tôi không?\". Hỏi đường/gọi xe: \"Xin chỉ đường đến đồn công an gần nhất.\" — \"Xin gọi giúp tôi cảnh sát.\" Y tế: \"Xin gọi xe cấp cứu.\" — \"Tôi cần bác sĩ.\" Câu ngắn để công an, nhân viên hoặc tài xế đọc nhanh.",
+      "keywords": ["câu tiếng việt", "say in vietnamese", "viết giúp", "dịch giúp", "phrase", "translate", "noi tieng viet"],
+      "source": {"name": "Nhóm tự biên soạn — người bản ngữ kiểm trước CP3", "url": null, "viewed": "chưa có"}
+    }
+  ]
+}
